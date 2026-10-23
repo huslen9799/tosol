@@ -158,6 +158,7 @@ class _HomePageState extends State<HomePage> {
                       child: Text('Газрын зураг дээр байр хайх'),
                     ),
                   ),
+                  const SizedBox(height: 16),
                   Wrap(
                     spacing: 10,
                     runSpacing: 10,

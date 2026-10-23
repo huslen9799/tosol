@@ -377,7 +377,7 @@ void main() {
       final store = testStore(
         requests,
         handler: (r) async {
-          if (r.url.path == '/api/properties/')
+          if (r.url.path == '/api/properties/') {
             return jsonResponse({
               'count': 1,
               'next': null,
@@ -385,6 +385,7 @@ void main() {
                 {...sample, 'latitude': 47.9185, 'longitude': 106.9177},
               ],
             });
+          }
           return http.Response('', 418);
         },
       );
@@ -395,10 +396,15 @@ void main() {
         find.byType(MaterialApp),
         matchesGoldenFile('../docs/screenshots/home-desktop.png'),
       );
+      final appTheme = tester
+          .widget<MaterialApp>(find.byType(MaterialApp))
+          .theme;
       await tester.pumpWidget(
         AppScope(
           store: store,
           child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: appTheme,
             home: PropertyMapPage(
               query: const {'listing_type': 'sale'},
               tileBuilder: (_) => const ColoredBox(color: Color(0xFFE4EADF)),
