@@ -172,7 +172,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         height: 22,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('Бүртгүүлэх'),
+                    : const Text('Бүртгүүлэх.'),
               ),
             ],
           ),
