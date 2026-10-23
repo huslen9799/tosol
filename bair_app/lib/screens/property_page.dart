@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../models/property.dart';
 import '../services/app_store.dart';
 import '../widgets/property_card.dart';
+import '../widgets/desktop_browser.dart';
 import 'filter_sheet.dart';
 import 'compare_page.dart';
 import 'property_map_page.dart';
@@ -132,6 +133,46 @@ class _PropertyPageState extends State<PropertyPage> {
         : widget.recommendations
         ? 'Танд тохирох байр'
         : 'Бүх байр';
+    if (MediaQuery.sizeOf(context).width >= 1000) {
+      return Scaffold(
+        appBar: widget.standalone ? AppBar(title: Text(title)) : null,
+        body: DesktopBrowser(
+          query: query,
+          search: search,
+          items: items,
+          count: count,
+          loading: loading,
+          loadingMore: loadingMore,
+          hasNext: hasNext,
+          error: error,
+          onFilters: filters,
+          onRetry: load,
+          onMore: () => load(more: true),
+          onApply: (value) {
+            debounce?.cancel();
+            setState(() => query = Map.of(value));
+            load();
+          },
+          onMap: () {
+            debounce?.cancel();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => PropertyMapPage(
+                  query: {
+                    ...query,
+                    'search': search.text.trim(),
+                    if (widget.saved) 'saved': 'true',
+                    if (widget.mine) 'mine': 'true',
+                  },
+                  recommendations: widget.recommendations,
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: widget.standalone,

@@ -21,6 +21,13 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
   String? error;
   bool loading = true, deleting = false;
   int photoIndex = 0;
+  final photoController = PageController();
+  @override
+  void dispose() {
+    photoController.dispose();
+    super.dispose();
+  }
+
   bool started = false;
   @override
   void didChangeDependencies() {
@@ -120,252 +127,309 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
           ? const SizedBox.shrink()
           : RefreshIndicator(
               onRefresh: load,
-              child: ListView(
-                padding: const EdgeInsets.only(bottom: 24),
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 18),
-                    child: PropertyLocation(property: p),
-                  ),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(22),
-                    child: SizedBox(
-                      height: 290,
-                      child: Stack(
-                        children: [
-                          if (p.imageUrls.isEmpty)
-                            const PropertyImageView()
-                          else
-                            PageView.builder(
-                              key: ValueKey(p.updatedKey),
-                              itemCount: p.imageUrls.length,
-                              onPageChanged: (i) =>
-                                  setState(() => photoIndex = i),
-                              itemBuilder: (_, i) => GestureDetector(
-                                onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => PhotoGallery(
-                                      urls: p.imageUrls,
-                                      initialIndex: i,
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 1040),
+                  child: ListView(
+                    padding: const EdgeInsets.only(bottom: 24),
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.zero,
+                        child: SizedBox(
+                          height: MediaQuery.sizeOf(context).width >= 900
+                              ? 440
+                              : 280,
+                          child: Stack(
+                            children: [
+                              if (p.imageUrls.isEmpty)
+                                const PropertyImageView()
+                              else
+                                PageView.builder(
+                                  controller: photoController,
+                                  key: ValueKey(p.updatedKey),
+                                  itemCount: p.imageUrls.length,
+                                  onPageChanged: (i) =>
+                                      setState(() => photoIndex = i),
+                                  itemBuilder: (_, i) => GestureDetector(
+                                    onTap: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => PhotoGallery(
+                                          urls: p.imageUrls,
+                                          initialIndex: i,
+                                        ),
+                                      ),
+                                    ),
+                                    child: PropertyImageView(
+                                      url: p.imageUrls[i],
                                     ),
                                   ),
                                 ),
-                                child: PropertyImageView(url: p.imageUrls[i]),
-                              ),
-                            ),
-                          if (p.imageUrls.isNotEmpty)
-                            Positioned(
-                              bottom: 16,
-                              right: 20,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 7,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.black54,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(
-                                  '${photoIndex + 1} / ${p.imageUrls.length}',
-                                  style: const TextStyle(color: Colors.white),
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Chip(
-                          label: Text(
-                            '${p.typeLabel} • ${propertyTypes[p.propertyType]}',
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          p.title,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w800,
-                            height: 1.25,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          p.priceLabel,
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w800,
-                            color: Color(0xFF172D29),
-                          ),
-                        ),
-                        if (p.area > 0 && p.listingType == 'sale')
-                          Padding(
-                            padding: const EdgeInsets.only(top: 6),
-                            child: Text(
-                              '${money(p.price / p.area)} / м²',
-                              style: const TextStyle(color: Colors.grey),
-                            ),
-                          ),
-                        const SizedBox(height: 16),
-                        CompareButton(property: p),
-                        OutlinedButton.icon(
-                          icon: const Icon(Icons.map_outlined),
-                          label: const Text('Газрын зурагт хайх'),
-                          onPressed: () async {
-                            try {
-                              final url = Uri.https(
-                                'www.google.com',
-                                '/maps/search/',
-                                {
-                                  'api': '1',
-                                  'query':
-                                      p.latitude != null && p.longitude != null
-                                      ? '${p.latitude},${p.longitude}'
-                                      : '${p.district} ${p.location}, Улаанбаатар',
-                                },
-                              );
-                              if (!await launchUrl(
-                                url,
-                                mode: LaunchMode.externalApplication,
-                              )) {
-                                throw Exception('Газрын зураг нээж чадсангүй.');
-                              }
-                            } catch (e) {
-                              if (context.mounted) showMessage(context, e);
-                            }
-                          },
-                        ),
-                        Card(
-                          child: Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                _Fact(
-                                  icon: Icons.bed_outlined,
-                                  value: '${p.rooms}',
-                                  label: 'өрөө',
-                                ),
-                                _Fact(
-                                  icon: Icons.square_foot,
-                                  value: '${p.area}',
-                                  label: 'м² талбай',
-                                ),
-                                _Fact(
-                                  icon: Icons.layers_outlined,
-                                  value: '${p.floor}/${p.totalFloors}',
-                                  label: 'давхар',
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        const Text(
-                          'Байрны тухай',
-                          style: TextStyle(
-                            fontSize: 21,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        SelectableText(
-                          p.description.isEmpty
-                              ? 'Нэмэлт тайлбар оруулаагүй.'
-                              : p.description,
-                          style: const TextStyle(height: 1.65),
-                        ),
-                        const SizedBox(height: 24),
-                        const Text(
-                          'Зар нийтэлсэн',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Card(
-                          child: ListTile(
-                            leading: const CircleAvatar(
-                              child: Icon(Icons.person_outline),
-                            ),
-                            title: Text(
-                              p.owner == null
-                                  ? 'Зар нийтлэгч'
-                                  : '${p.owner!['last_name']} ${p.owner!['first_name']}'
-                                        .trim(),
-                            ),
-                            subtitle: Text(
-                              p.phone.isEmpty ? 'Утас оруулаагүй' : p.phone,
-                            ),
-                            trailing: IconButton(
-                              tooltip: 'Утас хуулах',
-                              onPressed: p.phone.isEmpty
-                                  ? null
-                                  : () async {
-                                      await Clipboard.setData(
-                                        ClipboardData(text: p.phone),
-                                      );
-                                      if (context.mounted) {
-                                        showMessage(
-                                          context,
-                                          'Утасны дугаар хуулагдлаа.',
-                                        );
-                                      }
-                                    },
-                              icon: const Icon(Icons.copy_outlined),
-                            ),
-                          ),
-                        ),
-                        if (p.isOwner || store.isAdmin) ...[
-                          const SizedBox(height: 20),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: OutlinedButton.icon(
-                                  onPressed: deleting
-                                      ? null
-                                      : () async {
-                                          await Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (_) =>
-                                                  PropertyFormPage(property: p),
-                                            ),
-                                          );
-                                          if (mounted) await load();
-                                        },
-                                  icon: const Icon(Icons.edit_outlined),
-                                  label: const Text('Засах'),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: OutlinedButton.icon(
-                                  onPressed: deleting ? null : remove,
-                                  icon: const Icon(Icons.delete_outline),
-                                  label: Text(
-                                    deleting ? 'Устгаж байна' : 'Устгах',
-                                  ),
-                                  style: OutlinedButton.styleFrom(
-                                    foregroundColor: Colors.red.shade700,
+                              if (p.imageUrls.isNotEmpty)
+                                Positioned(
+                                  bottom: 16,
+                                  right: 20,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 7,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black54,
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Text(
+                                      '${photoIndex + 1} / ${p.imageUrls.length}',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
                             ],
                           ),
-                        ],
-                      ],
-                    ),
+                        ),
+                      ),
+                      if (p.imageUrls.length > 1)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(24, 10, 24, 0),
+                          child: SizedBox(
+                            height: 64,
+                            child: ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: p.imageUrls.length,
+                              separatorBuilder: (_, index) =>
+                                  const SizedBox(width: 8),
+                              itemBuilder: (_, i) => GestureDetector(
+                                onTap: () => photoController.animateToPage(
+                                  i,
+                                  duration: const Duration(milliseconds: 250),
+                                  curve: Curves.easeOut,
+                                ),
+                                child: Container(
+                                  width: 108,
+                                  clipBehavior: Clip.antiAlias,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(6),
+                                    border: Border.all(
+                                      color: photoIndex == i
+                                          ? const Color(0xFF285747)
+                                          : Colors.transparent,
+                                      width: 2,
+                                    ),
+                                  ),
+                                  child: PropertyImageView(url: p.imageUrls[i]),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Chip(
+                              label: Text(
+                                '${p.typeLabel} • ${propertyTypes[p.propertyType]}',
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              p.priceLabel,
+                              style: const TextStyle(
+                                fontSize: 30,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: -.8,
+                                color: Color(0xFF29332D),
+                              ),
+                            ),
+                            if (p.area > 0 && p.listingType == 'sale')
+                              Padding(
+                                padding: const EdgeInsets.only(top: 6),
+                                child: Text(
+                                  '${money(p.price / p.area)} / м²',
+                                  style: const TextStyle(
+                                    color: Color(0xFF7D837B),
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            const SizedBox(height: 14),
+                            Text(
+                              p.title,
+                              style: const TextStyle(
+                                fontSize: 23,
+                                fontWeight: FontWeight.w500,
+                                height: 1.3,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            PropertyLocation(property: p),
+                            const SizedBox(height: 16),
+                            Card(
+                              color: const Color(0xFFF0EEE7),
+                              child: Padding(
+                                padding: const EdgeInsets.all(20),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    _Fact(
+                                      icon: Icons.bed_outlined,
+                                      value: '${p.rooms} өрөө',
+                                      label: 'Өрөөний тоо',
+                                    ),
+                                    _Fact(
+                                      icon: Icons.square_foot,
+                                      value:
+                                          '${p.area.toStringAsFixed(p.area % 1 == 0 ? 0 : 1)} м²',
+                                      label: 'Нийт талбай',
+                                    ),
+                                    _Fact(
+                                      icon: Icons.layers_outlined,
+                                      value: '${p.floor}/${p.totalFloors}',
+                                      label: 'давхар',
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            const Text(
+                              'Байрны тухай',
+                              style: TextStyle(
+                                fontSize: 21,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            SelectableText(
+                              p.description.isEmpty
+                                  ? 'Нэмэлт тайлбар оруулаагүй.'
+                                  : p.description,
+                              style: const TextStyle(height: 1.65),
+                            ),
+                            const SizedBox(height: 24),
+                            CompareButton(property: p),
+                            OutlinedButton.icon(
+                              icon: const Icon(Icons.map_outlined),
+                              label: const Text('Газрын зурагт хайх'),
+                              onPressed: () async {
+                                try {
+                                  final url = Uri.https(
+                                    'www.google.com',
+                                    '/maps/search/',
+                                    {
+                                      'api': '1',
+                                      'query':
+                                          p.latitude != null &&
+                                              p.longitude != null
+                                          ? '${p.latitude},${p.longitude}'
+                                          : '${p.district} ${p.location}, Улаанбаатар',
+                                    },
+                                  );
+                                  if (!await launchUrl(
+                                    url,
+                                    mode: LaunchMode.externalApplication,
+                                  )) {
+                                    throw Exception(
+                                      'Газрын зураг нээж чадсангүй.',
+                                    );
+                                  }
+                                } catch (e) {
+                                  if (context.mounted) showMessage(context, e);
+                                }
+                              },
+                            ),
+                            const SizedBox(height: 12),
+                            const Text(
+                              'Зар нийтэлсэн',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Card(
+                              child: ListTile(
+                                leading: const CircleAvatar(
+                                  child: Icon(Icons.person_outline),
+                                ),
+                                title: Text(
+                                  p.owner == null
+                                      ? 'Зар нийтлэгч'
+                                      : '${p.owner!['last_name']} ${p.owner!['first_name']}'
+                                            .trim(),
+                                ),
+                                subtitle: Text(
+                                  p.phone.isEmpty ? 'Утас оруулаагүй' : p.phone,
+                                ),
+                                trailing: IconButton(
+                                  tooltip: 'Утас хуулах',
+                                  onPressed: p.phone.isEmpty
+                                      ? null
+                                      : () async {
+                                          await Clipboard.setData(
+                                            ClipboardData(text: p.phone),
+                                          );
+                                          if (context.mounted) {
+                                            showMessage(
+                                              context,
+                                              'Утасны дугаар хуулагдлаа.',
+                                            );
+                                          }
+                                        },
+                                  icon: const Icon(Icons.copy_outlined),
+                                ),
+                              ),
+                            ),
+                            if (p.isOwner || store.isAdmin) ...[
+                              const SizedBox(height: 20),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: OutlinedButton.icon(
+                                      onPressed: deleting
+                                          ? null
+                                          : () async {
+                                              await Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (_) =>
+                                                      PropertyFormPage(
+                                                        property: p,
+                                                      ),
+                                                ),
+                                              );
+                                              if (mounted) await load();
+                                            },
+                                      icon: const Icon(Icons.edit_outlined),
+                                      label: const Text('Засах'),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: OutlinedButton.icon(
+                                      onPressed: deleting ? null : remove,
+                                      icon: const Icon(Icons.delete_outline),
+                                      label: Text(
+                                        deleting ? 'Устгаж байна' : 'Устгах',
+                                      ),
+                                      style: OutlinedButton.styleFrom(
+                                        foregroundColor: Colors.red.shade700,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
       bottomNavigationBar: p == null || loading || error != null
@@ -420,7 +484,7 @@ class _Fact extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Column(
     children: [
-      Icon(icon, color: const Color(0xFF176454)),
+      Icon(icon, color: const Color(0xFF285747)),
       const SizedBox(height: 8),
       Text(
         value,

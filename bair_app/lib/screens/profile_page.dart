@@ -77,7 +77,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: [
                     const CircleAvatar(
                       radius: 28,
-                      backgroundColor: Color(0xFF176454),
+                      backgroundColor: Color(0xFF285747),
                       child: Icon(Icons.person, size: 36, color: Colors.white),
                     ),
                     const SizedBox(width: 14),
@@ -238,7 +238,7 @@ class _ProfileTile extends StatelessWidget {
     child: Card(
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: Icon(icon, color: const Color(0xFF176454)),
+        leading: Icon(icon, color: const Color(0xFF285747)),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
         subtitle: Text(subtitle),
         trailing: const Icon(Icons.chevron_right),

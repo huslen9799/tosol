@@ -396,6 +396,19 @@ void main() {
         find.byType(MaterialApp),
         matchesGoldenFile('../docs/screenshots/home-desktop.png'),
       );
+      await tester.tap(find.text('Байр хайх'));
+      await tester.pumpAndSettle();
+      expect(find.text('Дараагийн гэрээ эндээс.'), findsOneWidget);
+      expect(find.text('Үр дүн харах'), findsOneWidget);
+      await tester.enterText(find.byType(TextField).at(1), '100000000');
+      await tester.tap(find.text('Үр дүн харах'));
+      await tester.pumpAndSettle();
+      expect(requests.last.url.queryParameters['min_price'], '100000000');
+      expect(tester.takeException(), isNull);
+      await expectLater(
+        find.byType(MaterialApp),
+        matchesGoldenFile('../docs/screenshots/listings-desktop.png'),
+      );
       final appTheme = tester
           .widget<MaterialApp>(find.byType(MaterialApp))
           .theme;

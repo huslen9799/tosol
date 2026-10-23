@@ -42,28 +42,28 @@ class _BairAppState extends State<BairApp> {
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF176454),
-          primary: const Color(0xFF176454),
-          secondary: const Color(0xFF176454),
+          seedColor: const Color(0xFF285747),
+          primary: const Color(0xFF285747),
+          secondary: const Color(0xFF285747),
           onPrimary: Colors.white,
           onSurface: const Color(0xFF172D29),
           onSurfaceVariant: const Color(0xFF62736D),
           primaryContainer: const Color(0xFFEDF4EE),
           onPrimaryContainer: const Color(0xFF103F36),
           secondaryContainer: const Color(0xFFEDF4EE),
-          onSecondaryContainer: const Color(0xFF176454),
+          onSecondaryContainer: const Color(0xFF285747),
           error: const Color(0xFFEF4444),
           outline: const Color(0xFFDFE6DC),
           surface: Colors.white,
         ),
-        scaffoldBackgroundColor: const Color(0xFFF7F8F2),
+        scaffoldBackgroundColor: const Color(0xFFF8F7F3),
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: Color(0xFF176454),
+          backgroundColor: Color(0xFF285747),
           foregroundColor: Colors.white,
           elevation: 0,
         ),
         appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFFF7F8F2),
+          backgroundColor: Color(0xFFF8F7F3),
           foregroundColor: Color(0xFF172D29),
           centerTitle: false,
           elevation: 0,
@@ -82,7 +82,7 @@ class _BairAppState extends State<BairApp> {
           iconTheme: WidgetStateProperty.resolveWith(
             (states) => IconThemeData(
               color: states.contains(WidgetState.selected)
-                  ? const Color(0xFF176454)
+                  ? const Color(0xFF285747)
                   : const Color(0xFF93A49C),
               size: 24,
             ),
@@ -93,7 +93,7 @@ class _BairAppState extends State<BairApp> {
               fontSize: 10,
               fontWeight: FontWeight.w600,
               color: states.contains(WidgetState.selected)
-                  ? const Color(0xFF176454)
+                  ? const Color(0xFF285747)
                   : const Color(0xFF93A49C),
             ),
           ),
@@ -102,7 +102,7 @@ class _BairAppState extends State<BairApp> {
           style: ButtonStyle(
             backgroundColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.selected)
-                  ? const Color(0xFF176454)
+                  ? const Color(0xFF285747)
                   : Colors.white,
             ),
             foregroundColor: WidgetStateProperty.resolveWith(
@@ -122,7 +122,7 @@ class _BairAppState extends State<BairApp> {
           elevation: 0,
           color: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(12),
             side: const BorderSide(color: Color(0xFFDFE6DC)),
           ),
         ),

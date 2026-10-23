@@ -76,7 +76,7 @@ class _RegisterPageState extends State<RegisterPage> {
               const Icon(
                 Icons.person_add_alt_1,
                 size: 64,
-                color: Color(0xFF176454),
+                color: Color(0xFF285747),
               ),
               const SizedBox(height: 20),
               const Text(

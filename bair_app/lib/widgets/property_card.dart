@@ -68,7 +68,7 @@ class SaveButton extends StatelessWidget {
       tooltip: saved ? 'Хадгалснаас хасах' : 'Байр хадгалах',
       style: IconButton.styleFrom(
         backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF176454),
+        foregroundColor: const Color(0xFF285747),
       ),
       icon: Icon(
         saved ? Icons.favorite_rounded : Icons.favorite_border_rounded,
@@ -107,7 +107,7 @@ class PropertyCard extends StatelessWidget {
                   children: [
                     PropertyImageView(
                       url: property.imageUrls.firstOrNull,
-                      height: 230,
+                      height: 190,
                     ),
                     Positioned(
                       top: 12,
@@ -118,7 +118,7 @@ class PropertyCard extends StatelessWidget {
                           vertical: 7,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF176454),
+                          color: const Color(0xFF285747),
                           borderRadius: BorderRadius.circular(9),
                         ),
                         child: Text(
@@ -160,7 +160,7 @@ class PropertyCard extends StatelessWidget {
                       Text(
                         property.priceLabel,
                         style: const TextStyle(
-                          fontSize: 23,
+                          fontSize: 22,
                           fontWeight: FontWeight.w800,
                           color: Color(0xFF172D29),
                         ),
@@ -225,7 +225,7 @@ class PropertyCard extends StatelessWidget {
                       vertical: 3,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF176454),
+                      color: const Color(0xFF285747),
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: Text(
