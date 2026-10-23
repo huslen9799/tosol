@@ -5,6 +5,6 @@ Widget mapTile(String url, VoidCallback onError) => Image.network(
   fit: BoxFit.fill,
   errorBuilder: (_, error, stack) {
     onError();
-    return const ColoredBox(color: Color(0xFFF1F5F9));
+    return const ColoredBox(color: Color(0xFFF0F3EB));
   },
 );

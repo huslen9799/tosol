@@ -66,16 +66,16 @@ class _CachedMapTileState extends State<_CachedMapTile> {
     builder: (_, snapshot) {
       if (snapshot.hasError) {
         widget.onError();
-        return const ColoredBox(color: Color(0xFFF1F5F9));
+        return const ColoredBox(color: Color(0xFFF0F3EB));
       }
-      if (!snapshot.hasData) return const ColoredBox(color: Color(0xFFF1F5F9));
+      if (!snapshot.hasData) return const ColoredBox(color: Color(0xFFF0F3EB));
       return Image.memory(
         snapshot.data!,
         fit: BoxFit.fill,
         gaplessPlayback: true,
         errorBuilder: (_, error, stack) {
           widget.onError();
-          return const ColoredBox(color: Color(0xFFF1F5F9));
+          return const ColoredBox(color: Color(0xFFF0F3EB));
         },
       );
     },

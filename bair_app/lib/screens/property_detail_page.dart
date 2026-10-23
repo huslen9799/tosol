@@ -202,7 +202,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                           style: const TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.w800,
-                            color: Color(0xFF0F172A),
+                            color: Color(0xFF172D29),
                           ),
                         ),
                         if (p.area > 0 && p.listingType == 'sale')
@@ -420,7 +420,7 @@ class _Fact extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Column(
     children: [
-      Icon(icon, color: const Color(0xFF2563EB)),
+      Icon(icon, color: const Color(0xFF176454)),
       const SizedBox(height: 8),
       Text(
         value,

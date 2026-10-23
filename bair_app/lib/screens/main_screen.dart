@@ -19,23 +19,28 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     final store = AppScope.of(context);
     return Scaffold(
-      body: IndexedStack(
-        index: currentIndex,
-        children: [
-          const HomePage(),
-          const PropertyPage(),
-          store.loggedIn
-              ? const PropertyPage(saved: true)
-              : EmptyState(
-                  title: 'Таалагдсан байраа хадгалаарай',
-                  message: 'Нэвтэрч ороод хадгалсан заруудаа бүх төхөөрөмжөөсөө хараарай.',
-                  buttonLabel: 'Нэвтрэх',
-                  onRetry: () async {
-                    await requireLogin(context);
-                  },
-                ),
-          const ProfilePage(),
-        ],
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1280),
+          child: IndexedStack(
+            index: currentIndex,
+            children: [
+              const HomePage(),
+              const PropertyPage(),
+              store.loggedIn
+                  ? const PropertyPage(saved: true)
+                  : EmptyState(
+                      title: 'Таалагдсан байраа хадгалаарай',
+                      message: 'Нэвтэрч ороод хадгалсан заруудаа бүх төхөөрөмжөөсөө хараарай.',
+                      buttonLabel: 'Нэвтрэх',
+                      onRetry: () async {
+                        await requireLogin(context);
+                      },
+                    ),
+              const ProfilePage(),
+            ],
+          ),
+        ),
       ),
       floatingActionButton: currentIndex == 1
           ? FloatingActionButton.extended(

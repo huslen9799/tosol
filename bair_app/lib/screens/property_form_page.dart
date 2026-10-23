@@ -560,14 +560,14 @@ class _PropertyFormPageState extends State<PropertyFormPage> {
                   Container(
                     height: 120,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFEFF6FF),
+                      color: const Color(0xFFEDF4EE),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: const Center(
                       child: Icon(
                         Icons.add_photo_alternate_outlined,
                         size: 40,
-                        color: Color(0xFF94A3B8),
+                        color: Color(0xFF93A49C),
                       ),
                     ),
                   )

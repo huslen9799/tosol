@@ -42,29 +42,29 @@ class _BairAppState extends State<BairApp> {
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF2563EB),
-          primary: const Color(0xFF2563EB),
-          secondary: const Color(0xFF2563EB),
+          seedColor: const Color(0xFF176454),
+          primary: const Color(0xFF176454),
+          secondary: const Color(0xFF176454),
           onPrimary: Colors.white,
-          onSurface: const Color(0xFF0F172A),
-          onSurfaceVariant: const Color(0xFF475569),
-          primaryContainer: const Color(0xFFEFF6FF),
-          onPrimaryContainer: const Color(0xFF1E40AF),
-          secondaryContainer: const Color(0xFFEFF6FF),
-          onSecondaryContainer: const Color(0xFF2563EB),
+          onSurface: const Color(0xFF172D29),
+          onSurfaceVariant: const Color(0xFF62736D),
+          primaryContainer: const Color(0xFFEDF4EE),
+          onPrimaryContainer: const Color(0xFF103F36),
+          secondaryContainer: const Color(0xFFEDF4EE),
+          onSecondaryContainer: const Color(0xFF176454),
           error: const Color(0xFFEF4444),
-          outline: const Color(0xFFE2E8F0),
+          outline: const Color(0xFFDFE6DC),
           surface: Colors.white,
         ),
-        scaffoldBackgroundColor: const Color(0xFFF8FAFC),
+        scaffoldBackgroundColor: const Color(0xFFF7F8F2),
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: Color(0xFF2563EB),
+          backgroundColor: Color(0xFF176454),
           foregroundColor: Colors.white,
           elevation: 0,
         ),
         appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFFF8FAFC),
-          foregroundColor: Color(0xFF0F172A),
+          backgroundColor: Color(0xFFF7F8F2),
+          foregroundColor: Color(0xFF172D29),
           centerTitle: false,
           elevation: 0,
           scrolledUnderElevation: 0,
@@ -72,18 +72,18 @@ class _BairAppState extends State<BairApp> {
             fontFamily: 'Roboto',
             fontSize: 18,
             fontWeight: FontWeight.w700,
-            color: Color(0xFF0F172A),
+            color: Color(0xFF172D29),
           ),
         ),
         navigationBarTheme: NavigationBarThemeData(
           backgroundColor: Colors.white,
-          indicatorColor: const Color(0xFFEFF6FF),
+          indicatorColor: const Color(0xFFEDF4EE),
           elevation: 0,
           iconTheme: WidgetStateProperty.resolveWith(
             (states) => IconThemeData(
               color: states.contains(WidgetState.selected)
-                  ? const Color(0xFF2563EB)
-                  : const Color(0xFF94A3B8),
+                  ? const Color(0xFF176454)
+                  : const Color(0xFF93A49C),
               size: 24,
             ),
           ),
@@ -93,8 +93,8 @@ class _BairAppState extends State<BairApp> {
               fontSize: 10,
               fontWeight: FontWeight.w600,
               color: states.contains(WidgetState.selected)
-                  ? const Color(0xFF2563EB)
-                  : const Color(0xFF94A3B8),
+                  ? const Color(0xFF176454)
+                  : const Color(0xFF93A49C),
             ),
           ),
         ),
@@ -102,16 +102,16 @@ class _BairAppState extends State<BairApp> {
           style: ButtonStyle(
             backgroundColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.selected)
-                  ? const Color(0xFF2563EB)
+                  ? const Color(0xFF176454)
                   : Colors.white,
             ),
             foregroundColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.selected)
                   ? Colors.white
-                  : const Color(0xFF475569),
+                  : const Color(0xFF62736D),
             ),
             side: const WidgetStatePropertyAll(
-              BorderSide(color: Color(0xFFE2E8F0)),
+              BorderSide(color: Color(0xFFDFE6DC)),
             ),
             shape: WidgetStatePropertyAll(
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -123,7 +123,7 @@ class _BairAppState extends State<BairApp> {
           color: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
-            side: const BorderSide(color: Color(0xFFE2E8F0)),
+            side: const BorderSide(color: Color(0xFFDFE6DC)),
           ),
         ),
         inputDecorationTheme: InputDecorationTheme(
@@ -135,11 +135,11 @@ class _BairAppState extends State<BairApp> {
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+            borderSide: const BorderSide(color: Color(0xFFDFE6DC)),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+            borderSide: const BorderSide(color: Color(0xFFDFE6DC)),
           ),
         ),
         filledButtonTheme: FilledButtonThemeData(

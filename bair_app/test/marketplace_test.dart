@@ -292,7 +292,7 @@ void main() {
       await tester.tap(select);
       await tester.pumpAndSettle();
       await tester.scrollUntilVisible(
-        find.text('Ривер Гарден').last,
+        find.text('Ривер Гарден'),
         250,
         scrollable: find.byType(Scrollable).last,
       );

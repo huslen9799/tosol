@@ -77,7 +77,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: [
                     const CircleAvatar(
                       radius: 28,
-                      backgroundColor: Color(0xFF2563EB),
+                      backgroundColor: Color(0xFF176454),
                       child: Icon(Icons.person, size: 36, color: Colors.white),
                     ),
                     const SizedBox(width: 14),
@@ -89,7 +89,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             'Тавтай морилно уу',
                             style: TextStyle(
                               fontSize: 12,
-                              color: Color(0xFF475569),
+                              color: Color(0xFF62736D),
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -106,7 +106,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                               fontSize: 12,
-                              color: Color(0xFF94A3B8),
+                              color: Color(0xFF93A49C),
                             ),
                           ),
                         ],
@@ -238,7 +238,7 @@ class _ProfileTile extends StatelessWidget {
     child: Card(
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: Icon(icon, color: const Color(0xFF2563EB)),
+        leading: Icon(icon, color: const Color(0xFF176454)),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
         subtitle: Text(subtitle),
         trailing: const Icon(Icons.chevron_right),

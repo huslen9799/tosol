@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'map_tile.dart';
@@ -14,7 +15,8 @@ class MapPin {
   final MapPoint point;
   final String label;
   final VoidCallback? onTap;
-  const MapPin(this.point, this.label, {this.onTap});
+  final bool selected;
+  const MapPin(this.point, this.label, {this.onTap, this.selected = false});
 }
 
 /// Web Mercator map. Coordinates are stored separately from the written address.
@@ -42,6 +44,20 @@ class _LocationMapState extends State<LocationMap> {
   Size size = Size.zero;
   bool tileError = false;
   int tileRevision = 0;
+  int gestureZoom = 13;
+
+  @override
+  void didUpdateWidget(LocationMap oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialCenter.latitude != widget.initialCenter.latitude ||
+        oldWidget.initialCenter.longitude != widget.initialCenter.longitude) {
+      center = widget.initialCenter;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) notifyBounds();
+      });
+    }
+  }
+
   void reportTileError() {
     if (!tileError) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -142,20 +158,42 @@ class _LocationMapState extends State<LocationMap> {
         child: Stack(
           children: [
             Positioned.fill(
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onPanUpdate: (details) => setState(
-                  () => center = unproject(project(center) - details.delta),
-                ),
-                onPanEnd: (_) => notifyBounds(),
-                onTapUp: widget.onSelect == null
-                    ? null
-                    : (details) => widget.onSelect!(
-                        unproject(origin + details.localPosition),
-                      ),
-                child: ColoredBox(
-                  color: const Color(0xFFF1F5F9),
-                  child: Stack(children: tiles),
+              child: Listener(
+                onPointerSignal: (event) {
+                  if (event is PointerScrollEvent) {
+                    GestureBinding.instance.pointerSignalResolver.register(
+                      event,
+                      (event) {
+                        final scroll = event as PointerScrollEvent;
+                        if (scroll.scrollDelta.dy != 0) {
+                          changeZoom(scroll.scrollDelta.dy > 0 ? -1 : 1);
+                        }
+                      },
+                    );
+                  }
+                },
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onScaleStart: (_) => gestureZoom = zoom,
+                  onScaleUpdate: (details) => setState(() {
+                    center = unproject(
+                      project(center) - details.focalPointDelta,
+                    );
+                    zoom =
+                        (gestureZoom +
+                                (math.log(details.scale) / math.ln2).round())
+                            .clamp(2, 18);
+                  }),
+                  onScaleEnd: (_) => notifyBounds(),
+                  onTapUp: widget.onSelect == null
+                      ? null
+                      : (details) => widget.onSelect!(
+                          unproject(origin + details.localPosition),
+                        ),
+                  child: ColoredBox(
+                    color: const Color(0xFFF0F3EB),
+                    child: Stack(children: tiles),
+                  ),
                 ),
               ),
             ),
@@ -169,6 +207,18 @@ class _LocationMapState extends State<LocationMap> {
                   message: pin.label,
                   child: FilledButton(
                     style: FilledButton.styleFrom(
+                      backgroundColor: pin.selected
+                          ? const Color(0xFF173D32)
+                          : Colors.white,
+                      foregroundColor: pin.selected
+                          ? Colors.white
+                          : const Color(0xFF173D32),
+                      elevation: pin.selected ? 5 : 2,
+                      side: BorderSide(
+                        color: pin.selected
+                            ? const Color(0xFF173D32)
+                            : const Color(0xFFDFE6DC),
+                      ),
                       padding: const EdgeInsets.symmetric(horizontal: 6),
                     ),
                     onPressed: pin.onTap ?? () {},

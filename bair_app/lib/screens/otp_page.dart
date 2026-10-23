@@ -102,7 +102,7 @@ class _OtpPageState extends State<OtpPage> {
             const Icon(
               Icons.mark_email_read_outlined,
               size: 80,
-              color: Color(0xFF2563EB),
+              color: Color(0xFF176454),
             ),
             const SizedBox(height: 24),
             const Text(

@@ -11,6 +11,7 @@ import 'package:bair_app/main.dart';
 import 'package:bair_app/services/api_client.dart';
 import 'package:bair_app/services/app_store.dart';
 import 'package:bair_app/screens/login_page.dart';
+import 'package:bair_app/screens/property_map_page.dart';
 
 const user = {
   'id': 1,
@@ -364,4 +365,67 @@ void main() {
     await tester.pumpWidget(const SizedBox());
     store.dispose();
   });
+
+  testWidgets(
+    'desktop home and map show responsive results and refresh after pan',
+    (tester) async {
+      tester.view.physicalSize = const Size(1440, 950);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final requests = <http.Request>[];
+      final store = testStore(
+        requests,
+        handler: (r) async {
+          if (r.url.path == '/api/properties/')
+            return jsonResponse({
+              'count': 1,
+              'next': null,
+              'results': [
+                {...sample, 'latitude': 47.9185, 'longitude': 106.9177},
+              ],
+            });
+          return http.Response('', 418);
+        },
+      );
+      await tester.pumpWidget(BairApp(store: store));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      await expectLater(
+        find.byType(MaterialApp),
+        matchesGoldenFile('../docs/screenshots/home-desktop.png'),
+      );
+      await tester.pumpWidget(
+        AppScope(
+          store: store,
+          child: MaterialApp(
+            home: PropertyMapPage(
+              query: const {'listing_type': 'sale'},
+              tileBuilder: (_) => const ColoredBox(color: Color(0xFFE4EADF)),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Байршлаар нь харьцуулаарай'), findsOneWidget);
+      expect(find.text(sample['title'] as String), findsOneWidget);
+      final previous = requests.length;
+      await tester.dragFrom(const Offset(800, 450), const Offset(90, 0));
+      await tester.pump(const Duration(milliseconds: 600));
+      await tester.pumpAndSettle();
+      expect(requests.length, greaterThan(previous));
+      expect(requests.last.url.queryParameters['listing_type'], 'sale');
+      await tester.tap(find.text('350,000,000 ₮').last);
+      await tester.pumpAndSettle();
+      expect(find.text('СОНГОСОН БАЙР'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await expectLater(
+        find.byType(MaterialApp),
+        matchesGoldenFile('../docs/screenshots/map-desktop.png'),
+      );
+      await tester.pumpWidget(const SizedBox());
+      store.dispose();
+      store.api.client.close();
+    },
+  );
 }

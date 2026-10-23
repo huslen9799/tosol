@@ -28,12 +28,12 @@ class PropertyImageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget fallback() => Container(
-      color: const Color(0xFFEFF6FF),
+      color: const Color(0xFFEDF4EE),
       alignment: Alignment.center,
       child: const Icon(
         Icons.apartment_rounded,
         size: 64,
-        color: Color(0xFF94A3B8),
+        color: Color(0xFF93A49C),
       ),
     );
     return SizedBox(
@@ -48,7 +48,7 @@ class PropertyImageView extends StatelessWidget {
               loadingBuilder: (_, child, progress) => progress == null
                   ? child
                   : Container(
-                      color: const Color(0xFFEFF6FF),
+                      color: const Color(0xFFEDF4EE),
                       alignment: Alignment.center,
                       child: const CircularProgressIndicator(strokeWidth: 2),
                     ),
@@ -68,7 +68,7 @@ class SaveButton extends StatelessWidget {
       tooltip: saved ? 'Хадгалснаас хасах' : 'Байр хадгалах',
       style: IconButton.styleFrom(
         backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF2563EB),
+        foregroundColor: const Color(0xFF176454),
       ),
       icon: Icon(
         saved ? Icons.favorite_rounded : Icons.favorite_border_rounded,
@@ -107,7 +107,7 @@ class PropertyCard extends StatelessWidget {
                   children: [
                     PropertyImageView(
                       url: property.imageUrls.firstOrNull,
-                      height: 190,
+                      height: 230,
                     ),
                     Positioned(
                       top: 12,
@@ -118,7 +118,7 @@ class PropertyCard extends StatelessWidget {
                           vertical: 7,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF2563EB),
+                          color: const Color(0xFF176454),
                           borderRadius: BorderRadius.circular(9),
                         ),
                         child: Text(
@@ -160,9 +160,9 @@ class PropertyCard extends StatelessWidget {
                       Text(
                         property.priceLabel,
                         style: const TextStyle(
-                          fontSize: 18,
+                          fontSize: 23,
                           fontWeight: FontWeight.w800,
-                          color: Color(0xFF0F172A),
+                          color: Color(0xFF172D29),
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -176,7 +176,7 @@ class PropertyCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      const Divider(height: 24, color: Color(0xFFF1F5F9)),
+                      const Divider(height: 24, color: Color(0xFFF0F3EB)),
                       Wrap(
                         spacing: 18,
                         runSpacing: 6,
@@ -225,7 +225,7 @@ class PropertyCard extends StatelessWidget {
                       vertical: 3,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF2563EB),
+                      color: const Color(0xFF176454),
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: Text(
@@ -279,7 +279,7 @@ class PropertyCard extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFF0F172A),
+                    color: Color(0xFF172D29),
                   ),
                 ),
               ),
@@ -315,11 +315,11 @@ class PropertyCard extends StatelessWidget {
   Widget _fact(IconData icon, String text) => Row(
     mainAxisSize: MainAxisSize.min,
     children: [
-      Icon(icon, size: 13, color: const Color(0xFF475569)),
+      Icon(icon, size: 13, color: const Color(0xFF62736D)),
       const SizedBox(width: 3),
       Text(
         text,
-        style: const TextStyle(fontSize: 10, color: Color(0xFF475569)),
+        style: const TextStyle(fontSize: 10, color: Color(0xFF62736D)),
       ),
     ],
   );
@@ -390,7 +390,7 @@ class EmptyState extends StatelessWidget {
           const Icon(
             Icons.home_work_outlined,
             size: 54,
-            color: Color(0xFF94A3B8),
+            color: Color(0xFF93A49C),
           ),
           const SizedBox(height: 16),
           Text(
