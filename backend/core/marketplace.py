@@ -1,3 +1,8 @@
+import logging
+from urllib.error import URLError
+from cloudinary.exceptions import Error as CloudinaryError
+from requests.exceptions import RequestException
+from rest_framework.exceptions import APIException
 from decimal import Decimal, InvalidOperation
 from django.db import transaction
 from django.db.models import Q
@@ -9,6 +14,36 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from .models import Property, PropertyImage, Favorite
 from .serializers import PropertySerializer, PropertyImageSerializer, UserSerializer
+
+
+logger = logging.getLogger(__name__)
+
+
+class PhotoUploadUnavailable(APIException):
+    status_code = 503
+    default_code = "photo_upload_unavailable"
+
+
+def photo_upload_error(error):
+    # Categorize provider errors without logging credentials or photo contents.
+    reason = str(error).lower()
+    if isinstance(error, (RequestException, URLError, TimeoutError)):
+        category = "connection"
+        detail = "Зураг хадгалах Cloudinary үйлчилгээтэй холбогдсонгүй. Түр хүлээгээд дахин оролдоно уу."
+    elif any(term in reason for term in ("api key", "api_key", "api secret", "api_secret", "signature", "cloud name", "cloud_name", "credential")):
+        category = "credentials"
+        detail = "Cloudinary нэвтрэх тохиргоо буруу байна. Render-ийн CLOUDINARY_URL дахь cloud name, API key, API secret нэг account-ийнх эсэхийг шалгана уу."
+    elif any(term in reason for term in ("quota", "credit", "limit exceeded")):
+        category = "quota"
+        detail = "Зураг хадгалах үйлчилгээний лимит хүрсэн байна. Cloudinary account-ийн хэрэглээг шалгана уу."
+    elif any(term in reason for term in ("invalid image", "unsupported", "image file")):
+        category = "format"
+        detail = "Энэ зургийн форматыг хадгалж чадсангүй. JPG эсвэл PNG зураг сонгоно уу."
+    else:
+        category = "provider"
+        detail = "Cloudinary зураг хадгалах хүсэлтийг зөвшөөрсөнгүй. Тохиргоо болон үйлчилгээний төлөвийг шалгана уу."
+    logger.error("Photo upload failed: category=%s, error_type=%s", category, type(error).__name__)
+    return PhotoUploadUnavailable(detail)
 
 
 class OwnerPermission(BasePermission):
@@ -128,11 +163,14 @@ class PropertyViewSet(viewsets.ModelViewSet):
                 image_field.run_validation(file)
             except DjangoValidationError as exc:
                 raise serializers.ValidationError({"images": exc.messages}) from exc
-        with transaction.atomic():
-            Property.objects.select_for_update().get(pk=property.pk)
-            if property.images.count() + len(files) + bool(property.image) > 12:
-                raise serializers.ValidationError({"images": "Хамгийн ихдээ 12 зураг оруулна."})
-            photos = [PropertyImage.objects.create(property=property, image=file) for file in files]
+        try:
+            with transaction.atomic():
+                Property.objects.select_for_update().get(pk=property.pk)
+                if property.images.count() + len(files) + bool(property.image) > 12:
+                    raise serializers.ValidationError({"images": "Хамгийн ихдээ 12 зураг оруулна."})
+                photos = [PropertyImage.objects.create(property=property, image=file) for file in files]
+        except (CloudinaryError, RequestException, URLError, TimeoutError, ValueError) as error:
+            raise photo_upload_error(error) from None
         return Response(PropertyImageSerializer(photos, many=True, context={"request": request}).data, status=201)
 
 
