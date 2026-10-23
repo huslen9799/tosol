@@ -45,6 +45,46 @@ Environment variables:
 Render's own hostname is added to ALLOWED_HOSTS automatically. For custom API
 domains set DJANGO_ALLOWED_HOSTS (hostnames only, comma-separated).
 
+## Email on Render Free: Resend HTTPS API
+
+The application selects `core.email_backends.ResendEmailBackend` automatically
+when `RESEND_API_KEY` is nonempty. Registration, resend OTP, and password reset
+keep their existing Django `send_mail()` calls and use HTTPS on port 443.
+No additional package is required. SMTP variables and `EMAIL_BACKEND` overrides
+are ignored while the Resend key is present. With no Resend key, the original
+SMTP/development configuration is retained.
+
+Deploy the source change before testing. In Render Environment set:
+
+- `RESEND_API_KEY`: the `re_...` key generated in Resend.
+- `DEFAULT_FROM_EMAIL`: a sender address on a domain verified in Resend.
+
+For a domain-free test use `Urgoo <onboarding@resend.dev>` as the sender, and
+register with the email address that owns the Resend account. This sender
+cannot send OTPs to arbitrary users. A Gmail App Password is not a Resend key,
+and a Gmail address is not a verified Resend sending domain.
+
+After pushing to GitHub, wait for Render's deployment of that commit to become
+Live. Test registration, resend, and password reset with an address you control.
+Check Resend's Emails log for accepted/delivered/bounced events and the recipient's
+Spam folder. An API acceptance ID confirms submission, not inbox delivery.
+Do not post API keys, OTPs, or database credentials in chat or commit them.
+
+Sanitized Render log errors identify common configuration problems:
+
+- HTTP 401: missing/invalid key.
+- HTTP 403: key permissions, unverified sender domain, or disallowed test recipient.
+- HTTP 422: sender or recipient format.
+- HTTP 429: sending quota or rate limit.
+- HTTPS connection failure: network timeout; retry later.
+
+Provider contract tests, using mocked HTTPS responses (no real mail or DB):
+
+`python manage.py test core.test_resend --noinput`
+
+References: https://resend.com/docs/api-reference/emails/send-email and
+https://resend.com/docs/api-reference/errors
+
 ## Verify after deployment
 
 Check /health/ and /api/properties/, image loading, login, OTP delivery, password
