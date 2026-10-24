@@ -116,24 +116,21 @@ class _ComfortPageState extends State<ComfortPage> {
       final route = DialogRoute<String>(
         context: context,
         builder: (c) => AlertDialog(
-          title: const Text('Сэтгэгдэл засах'),
+          title: Text('Сэтгэгдэл засах'),
           content: TextField(
             controller: controller,
             maxLength: 2000,
             maxLines: 4,
           ),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(c),
-              child: const Text('Болих'),
-            ),
+            TextButton(onPressed: () => Navigator.pop(c), child: Text('Болих')),
             FilledButton(
               onPressed: () {
                 if (controller.text.trim().isNotEmpty) {
                   Navigator.pop(c, controller.text.trim());
                 }
               },
-              child: const Text('Хадгалах'),
+              child: Text('Хадгалах'),
             ),
           ],
         ),
@@ -169,15 +166,15 @@ class _ComfortPageState extends State<ComfortPage> {
     final accepted = await showDialog<bool>(
       context: context,
       builder: (c) => AlertDialog(
-        title: const Text('Сэтгэгдлээ устгах уу?'),
+        title: Text('Сэтгэгдлээ устгах уу?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(c, false),
-            child: const Text('Болих'),
+            child: Text('Болих'),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(c, true),
-            child: const Text('Устгах'),
+            child: Text('Устгах'),
           ),
         ],
       ),
@@ -201,7 +198,7 @@ class _ComfortPageState extends State<ComfortPage> {
     return Scaffold(
       appBar: AppBar(title: Text('${widget.name} • Тав тух')),
       body: loading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(child: CircularProgressIndicator())
           : error != null
           ? EmptyState(
               title: 'Үнэлгээ ачаалж чадсангүй',
@@ -211,20 +208,20 @@ class _ComfortPageState extends State<ComfortPage> {
           : RefreshIndicator(
               onRefresh: load,
               child: ListView(
-                padding: const EdgeInsets.all(20),
+                padding: EdgeInsets.all(20),
                 children: [
                   Text(
                     'Тав тухын үнэлгээ',
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   Text(
                     '${(data!['score'] as num).toStringAsFixed(1)} / 100',
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   Card(
                     child: Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -233,24 +230,24 @@ class _ComfortPageState extends State<ComfortPage> {
                             runSpacing: 8,
                             children: [
                               Chip(
-                                avatar: const Icon(Icons.people_outline),
+                                avatar: Icon(Icons.people_outline),
                                 label: Text(
                                   '${data['rating_count']} хүн үнэлсэн',
                                 ),
                               ),
                               Chip(
-                                avatar: const Icon(Icons.fact_check_outlined),
+                                avatar: Icon(Icons.fact_check_outlined),
                                 label: Text(
                                   '${data['rated_criteria_count'] ?? (data['criteria'] as List).where((r) => (r['count'] as num) > 0).length}/${data['total_criteria_count'] ?? (data['criteria'] as List).length} шалгуур үнэлэгдсэн',
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 8),
+                          SizedBox(height: 8),
                           Text(
                             'Мэдээллийн хамрагдалт: ${(data['coverage'] as num).toStringAsFixed(1)}%',
                           ),
-                          const SizedBox(height: 8),
+                          SizedBox(height: 8),
                           LinearProgressIndicator(
                             value:
                                 (data['coverage'] as num).toDouble().clamp(
@@ -259,19 +256,19 @@ class _ComfortPageState extends State<ComfortPage> {
                                 ) /
                                 100,
                           ),
-                          const SizedBox(height: 8),
-                          const Text(
+                          SizedBox(height: 8),
+                          Text(
                             'Хамрагдалт нь таны сонгосон жингийн хэдэн хувьд бодит хэрэглэгчийн үнэлгээ байгааг харуулна. Олон хүн үнэлсэн гэсэн утга биш.',
                           ),
                           if ((data['rating_count'] as num) == 0)
-                            const Text(
+                            Text(
                               'Үнэлгээ хараахан алга. 50 нь түр анхдагч утга.',
-                              style: TextStyle(color: Colors.deepOrange),
+                              style: TextStyle(),
                             )
                           else if ((data['rating_count'] as num) < 5)
-                            const Text(
+                            Text(
                               'Цөөн хүний үнэлгээтэй. Оноо шинэ үнэлгээ нэмэгдэхэд мэдэгдэхүйц өөрчлөгдөж болно.',
-                              style: TextStyle(color: Colors.deepOrange),
+                              style: TextStyle(),
                             ),
                           if (data['latest_rating_at'] != null)
                             Text(
@@ -287,29 +284,27 @@ class _ComfortPageState extends State<ComfortPage> {
                         : '${data['rating_count']} хэрэглэгчийн үнэлгээ',
                   ),
                   if (data['rankable'] != true)
-                    const Text(
+                    Text(
                       'Мэдээлэл хангалтгүй • Эцсийн эрэмбэд ашиглахгүй.',
-                      style: TextStyle(color: Colors.deepOrange),
+                      style: TextStyle(),
                     ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   Text('${data['quality_note']}'),
-                  const SizedBox(height: 8),
-                  const Text(
+                  SizedBox(height: 8),
+                  Text(
                     'Жин нь судалгаагаар батлагдсан үр дүн биш, эхний загвар. 100 нь хамгийн таатай, 0 нь хамгийн таагүй. Оноо нь нэг зарын үнэлгээ биш, хотхоны нийтлэг нөхцөлийн үнэлгээ.',
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   ...((data['criteria'] as List).cast<Map<String, dynamic>>()).map(
                     (row) => Card(
                       child: Padding(
-                        padding: const EdgeInsets.all(14),
+                        padding: EdgeInsets.all(14),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               '${row['label']} • ${row['weight']}%',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                             Text(
                               row['origin'] == 'default'
@@ -321,7 +316,7 @@ class _ComfortPageState extends State<ComfortPage> {
                                   ? 0
                                   : (row['score'] as num).toDouble() / 100,
                             ),
-                            const SizedBox(height: 6),
+                            SizedBox(height: 6),
                             Text('${row['hint']}'),
                             if (row['origin'] != 'default')
                               Text(
@@ -340,7 +335,7 @@ class _ComfortPageState extends State<ComfortPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   FilledButton(
                     onPressed: busy ? null : editRating,
                     child: Text(
@@ -351,50 +346,48 @@ class _ComfortPageState extends State<ComfortPage> {
                   ),
                   OutlinedButton(
                     onPressed: busy ? null : () => editRating(weights: true),
-                    child: const Text('Миний шалгуурын жин'),
+                    child: Text('Миний шалгуурын жин'),
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24),
                   Text(
                     'Сэтгэгдэл • ${data['comment_count']}',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
-                  const Text(''),
-                  const SizedBox(height: 12),
+                  Text(''),
+                  SizedBox(height: 12),
                   TextField(
                     controller: comment,
                     enabled: !busy,
                     maxLength: 2000,
                     minLines: 2,
                     maxLines: 5,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Сэтгэгдэл бичих',
                       hintText: 'Хотхоны талаарх туршлагаа хуваалцаарай.',
                     ),
                   ),
                   FilledButton(
                     onPressed: busy ? null : () => saveComment(),
-                    child: const Text('Сэтгэгдэл нийтлэх'),
+                    child: Text('Сэтгэгдэл нийтлэх'),
                   ),
                   if (comments.isEmpty)
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.all(16),
                       child: Text('Сэтгэгдэл хараахан алга.'),
                     ),
                   ...comments.map(
                     (item) => Card(
                       child: Padding(
-                        padding: const EdgeInsets.all(14),
+                        padding: EdgeInsets.all(14),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               '${item['username']}',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                             Text('${item['created_at']}'.split('T').first),
-                            const SizedBox(height: 8),
+                            SizedBox(height: 8),
                             Text('${item['text']}'),
                             Row(
                               children: [
@@ -403,14 +396,14 @@ class _ComfortPageState extends State<ComfortPage> {
                                     onPressed: busy
                                         ? null
                                         : () => saveComment(item),
-                                    child: const Text('Засах'),
+                                    child: Text('Засах'),
                                   ),
                                 if (item['can_delete'] == true)
                                   TextButton(
                                     onPressed: busy
                                         ? null
                                         : () => deleteComment(item),
-                                    child: const Text('Устгах'),
+                                    child: Text('Устгах'),
                                   ),
                               ],
                             ),
@@ -422,7 +415,7 @@ class _ComfortPageState extends State<ComfortPage> {
                   if (hasNext)
                     OutlinedButton(
                       onPressed: loadingMore || busy ? null : moreComments,
-                      child: const Text('Өмнөх сэтгэгдлүүд'),
+                      child: Text('Өмнөх сэтгэгдлүүд'),
                     ),
                 ],
               ),
@@ -501,16 +494,16 @@ class _ComfortEditPageState extends State<ComfortEditPage> {
       final accepted = await showDialog<bool>(
         context: context,
         builder: (c) => AlertDialog(
-          title: const Text('Үнэлгээгээ хасах уу?'),
-          content: const Text('Үнэлгээтэй хамт бичсэн тайлбар мөн хасагдана.'),
+          title: Text('Үнэлгээгээ хасах уу?'),
+          content: Text('Үнэлгээтэй хамт бичсэн тайлбар мөн хасагдана.'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(c, false),
-              child: const Text('Болих'),
+              child: Text('Болих'),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(c, true),
-              child: const Text('Хасах'),
+              child: Text('Хасах'),
             ),
           ],
         ),
@@ -545,7 +538,7 @@ class _ComfortEditPageState extends State<ComfortEditPage> {
       title: Text(widget.weights ? 'Шалгуурын жин' : 'Миний хотхоны үнэлгээ'),
     ),
     body: ListView(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(20),
       children: [
         Text(
           widget.weights
@@ -556,18 +549,16 @@ class _ComfortEditPageState extends State<ComfortEditPage> {
           Text(
             'Нийт: ${controllers.values.fold<double>(0, (sum, c) => sum + (double.tryParse(c.text) ?? 0)).toStringAsFixed(1)}%',
           ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         ...rows.map((row) {
           final key = row['key'] as String;
           if (widget.weights) {
             return Padding(
-              padding: const EdgeInsets.only(bottom: 16),
+              padding: EdgeInsets.only(bottom: 16),
               child: TextField(
                 controller: controllers[key],
                 enabled: !busy,
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
-                ),
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
                 decoration: InputDecoration(labelText: '${row['label']} • %'),
                 onChanged: (_) => setState(() {}),
               ),
@@ -617,17 +608,17 @@ class _ComfortEditPageState extends State<ComfortEditPage> {
                       entry.value.text = '${defaults[entry.key]}';
                     }
                   }),
-            child: const Text('Анхдагч жинг сэргээх'),
+            child: Text('Анхдагч жинг сэргээх'),
           ),
         if (!widget.weights) ...[
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           TextField(
             controller: explanation,
             enabled: !busy,
             maxLength: 2000,
             minLines: 2,
             maxLines: 5,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Үнэлгээний тайлбар (заавал биш)',
               hintText: 'Хоосон орхиж болно.',
               helperText:
@@ -635,7 +626,7 @@ class _ComfortEditPageState extends State<ComfortEditPage> {
               helperMaxLines: 2,
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
         ],
         FilledButton(
           onPressed: busy ? null : save,
@@ -644,7 +635,7 @@ class _ComfortEditPageState extends State<ComfortEditPage> {
         if (!widget.weights && (widget.data['my_scores'] as Map).isNotEmpty)
           TextButton(
             onPressed: busy ? null : () => save(remove: true),
-            child: const Text('Миний үнэлгээг хасах'),
+            child: Text('Миний үнэлгээг хасах'),
           ),
       ],
     ),

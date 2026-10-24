@@ -91,21 +91,17 @@ class _DesktopBrowserState extends State<DesktopBrowser> {
   Widget build(BuildContext context) => Column(
     children: [
       Container(
-        color: const Color(0xFFF0EEE7),
-        padding: const EdgeInsets.fromLTRB(24, 20, 24, 22),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        padding: EdgeInsets.fromLTRB(24, 20, 24, 22),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'НҮҮР  ›  БАЙР ХАЙХ',
-              style: TextStyle(
-                fontSize: 10,
-                color: AppColors.secondaryText,
-                letterSpacing: 1,
-              ),
+              style: TextStyle(fontSize: 10, letterSpacing: 1),
             ),
-            const SizedBox(height: 12),
-            const Text(
+            SizedBox(height: 12),
+            Text(
               'Дараагийн гэрээ эндээс.',
               style: TextStyle(
                 fontSize: 28,
@@ -113,7 +109,7 @@ class _DesktopBrowserState extends State<DesktopBrowser> {
                 letterSpacing: -.7,
               ),
             ),
-            const SizedBox(height: 18),
+            SizedBox(height: 18),
             Row(
               children: [
                 Expanded(
@@ -121,26 +117,23 @@ class _DesktopBrowserState extends State<DesktopBrowser> {
                   child: TextField(
                     controller: widget.search,
                     onSubmitted: (_) => apply(),
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       prefixIcon: Icon(Icons.place_outlined, size: 20),
                       hintText: 'Улаанбаатар, дүүрэг, хотхон...',
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12),
                 Expanded(
                   flex: 2,
                   child: DropdownButtonFormField<String>(
                     initialValue: draft['property_type'] ?? '',
                     key: ValueKey(draft['property_type']),
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       prefixIcon: Icon(Icons.apartment, size: 20),
                     ),
                     items: [
-                      const DropdownMenuItem(
-                        value: '',
-                        child: Text('Бүх төрөл'),
-                      ),
+                      DropdownMenuItem(value: '', child: Text('Бүх төрөл')),
                       ...propertyTypes.entries.map(
                         (e) => DropdownMenuItem(
                           value: e.key,
@@ -152,17 +145,17 @@ class _DesktopBrowserState extends State<DesktopBrowser> {
                         setState(() => draft['property_type'] = value!),
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12),
                 FilledButton.icon(
                   onPressed: apply,
-                  icon: const Icon(Icons.search, size: 18),
-                  label: const Text('Хайх'),
+                  icon: Icon(Icons.search, size: 18),
+                  label: Text('Хайх'),
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 OutlinedButton.icon(
                   onPressed: widget.onMap,
-                  icon: const Icon(Icons.map_outlined, size: 18),
-                  label: const Text('Газрын зураг'),
+                  icon: Icon(Icons.map_outlined, size: 18),
+                  label: Text('Газрын зураг'),
                 ),
               ],
             ),
@@ -176,11 +169,11 @@ class _DesktopBrowserState extends State<DesktopBrowser> {
             SizedBox(
               width: 220,
               child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(24, 24, 12, 30),
+                padding: EdgeInsets.fromLTRB(24, 24, 12, 30),
                 child: Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surface,
                     border: Border.all(color: AppColors.border),
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -189,7 +182,7 @@ class _DesktopBrowserState extends State<DesktopBrowser> {
                     children: [
                       Row(
                         children: [
-                          const Expanded(
+                          Expanded(
                             child: Text(
                               'Шүүлтүүр',
                               style: TextStyle(fontSize: 16),
@@ -211,29 +204,29 @@ class _DesktopBrowserState extends State<DesktopBrowser> {
                               widget.search.clear();
                               widget.onApply({});
                             },
-                            child: const Text(
+                            child: Text(
                               'Цэвэрлэх',
                               style: TextStyle(fontSize: 10),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
-                      const Text(
+                      SizedBox(height: 16),
+                      Text(
                         'Дүүрэг',
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 12,
                         ),
                       ),
-                      const SizedBox(height: 10),
+                      SizedBox(height: 10),
                       for (final d in ['', ...districts])
                         InkWell(
                           onTap: () => setState(() {
                             toggleDistrict(draft, d);
                           }),
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 6),
+                            padding: EdgeInsets.symmetric(vertical: 6),
                             child: Row(
                               children: [
                                 Icon(
@@ -246,24 +239,24 @@ class _DesktopBrowserState extends State<DesktopBrowser> {
                                   size: 15,
                                   color: AppColors.primary,
                                 ),
-                                const SizedBox(width: 7),
+                                SizedBox(width: 7),
                                 Expanded(
                                   child: Text(
                                     d.isEmpty ? 'Бүх дүүрэг' : d,
-                                    style: const TextStyle(fontSize: 11),
+                                    style: TextStyle(fontSize: 11),
                                   ),
                                 ),
                               ],
                             ),
                           ),
                         ),
-                      const SizedBox(height: 20),
-                      const Text('Үнэ · ₮', style: TextStyle(fontSize: 12)),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 20),
+                      Text('Үнэ · ₮', style: TextStyle(fontSize: 12)),
+                      SizedBox(height: 8),
                       _range(minPrice, maxPrice),
-                      const SizedBox(height: 20),
-                      const Text('Өрөөний тоо', style: TextStyle(fontSize: 12)),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 20),
+                      Text('Өрөөний тоо', style: TextStyle(fontSize: 12)),
+                      SizedBox(height: 8),
                       Wrap(
                         spacing: 5,
                         runSpacing: 5,
@@ -283,16 +276,16 @@ class _DesktopBrowserState extends State<DesktopBrowser> {
                             ),
                         ],
                       ),
-                      const SizedBox(height: 20),
-                      const Text('Талбай · м²', style: TextStyle(fontSize: 12)),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 20),
+                      Text('Талбай · м²', style: TextStyle(fontSize: 12)),
+                      SizedBox(height: 8),
                       _range(minArea, maxArea),
-                      const SizedBox(height: 20),
+                      SizedBox(height: 20),
                       SizedBox(
                         width: double.infinity,
                         child: FilledButton(
                           onPressed: apply,
-                          child: const Text(
+                          child: Text(
                             'Үр дүн харах',
                             style: TextStyle(fontSize: 12),
                           ),
@@ -300,8 +293,8 @@ class _DesktopBrowserState extends State<DesktopBrowser> {
                       ),
                       TextButton.icon(
                         onPressed: widget.onFilters,
-                        icon: const Icon(Icons.tune, size: 16),
-                        label: const Text(
+                        icon: Icon(Icons.tune, size: 16),
+                        label: Text(
                           'Бүх шүүлтүүр',
                           style: TextStyle(fontSize: 11),
                         ),
@@ -315,13 +308,13 @@ class _DesktopBrowserState extends State<DesktopBrowser> {
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 20, 24, 12),
+                    padding: EdgeInsets.fromLTRB(12, 20, 24, 12),
                     child: Row(
                       children: [
                         Expanded(
                           child: Text(
                             '${widget.count} байр',
-                            style: const TextStyle(fontSize: 20),
+                            style: TextStyle(fontSize: 20),
                           ),
                         ),
                         for (final option in [
@@ -337,15 +330,15 @@ class _DesktopBrowserState extends State<DesktopBrowser> {
                               foregroundColor:
                                   widget.query['listing_type'] == option.$1
                                   ? AppColors.primary
-                                  : AppColors.secondaryText,
+                                  : Theme.of(context).colorScheme.onSurface,
                             ),
                             child: Text(option.$2),
                           ),
-                        const SizedBox(width: 16),
+                        SizedBox(width: 16),
                         DropdownButton<String>(
                           value: widget.query['ordering'] ?? '-created_at',
-                          underline: const SizedBox.shrink(),
-                          items: const [
+                          underline: SizedBox.shrink(),
+                          items: [
                             DropdownMenuItem(
                               value: '-created_at',
                               child: Text('Шинэ эхэнд'),
@@ -377,9 +370,9 @@ class _DesktopBrowserState extends State<DesktopBrowser> {
                   ),
                   Expanded(
                     child: widget.loading
-                        ? const Center(child: CircularProgressIndicator())
+                        ? Center(child: CircularProgressIndicator())
                         : ListView(
-                            padding: const EdgeInsets.fromLTRB(12, 0, 24, 32),
+                            padding: EdgeInsets.fromLTRB(12, 0, 24, 32),
                             children: [
                               if (widget.error != null)
                                 EmptyState(
@@ -388,7 +381,7 @@ class _DesktopBrowserState extends State<DesktopBrowser> {
                                   onRetry: widget.onRetry,
                                 ),
                               if (widget.items.isEmpty && widget.error == null)
-                                const EmptyState(
+                                EmptyState(
                                   title: 'Тохирох зар олдсонгүй',
                                   message:
                                       'Шүүлтүүрээ өөрчилж дахин хайгаарай.',
@@ -414,7 +407,7 @@ class _DesktopBrowserState extends State<DesktopBrowser> {
                               ),
                               if (widget.hasNext)
                                 Padding(
-                                  padding: const EdgeInsets.only(top: 20),
+                                  padding: EdgeInsets.only(top: 20),
                                   child: OutlinedButton(
                                     onPressed: widget.loadingMore
                                         ? null
@@ -443,20 +436,20 @@ class _DesktopBrowserState extends State<DesktopBrowser> {
         child: TextField(
           controller: min,
           keyboardType: TextInputType.number,
-          style: const TextStyle(fontSize: 11),
-          decoration: const InputDecoration(
+          style: TextStyle(fontSize: 11),
+          decoration: InputDecoration(
             hintText: 'Доод',
             contentPadding: EdgeInsets.all(10),
           ),
         ),
       ),
-      const SizedBox(width: 6),
+      SizedBox(width: 6),
       Expanded(
         child: TextField(
           controller: max,
           keyboardType: TextInputType.number,
-          style: const TextStyle(fontSize: 11),
-          decoration: const InputDecoration(
+          style: TextStyle(fontSize: 11),
+          decoration: InputDecoration(
             hintText: 'Дээд',
             contentPadding: EdgeInsets.all(10),
           ),

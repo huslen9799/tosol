@@ -64,12 +64,12 @@ class _DiscoveryPageState extends State<DiscoveryPage> {
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: Text(widget.title)),
     body: loading && items.isEmpty
-        ? const Center(child: CircularProgressIndicator())
+        ? Center(child: CircularProgressIndicator())
         : RefreshIndicator(
             onRefresh: load,
             child: ListView(
-              padding: const EdgeInsets.all(20),
-              physics: const AlwaysScrollableScrollPhysics(),
+              padding: EdgeInsets.all(20),
+              physics: AlwaysScrollableScrollPhysics(),
               children: [
                 if (error != null)
                   EmptyState(
@@ -78,17 +78,17 @@ class _DiscoveryPageState extends State<DiscoveryPage> {
                     onRetry: load,
                   ),
                 if (items.isEmpty && error == null)
-                  const EmptyState(
+                  EmptyState(
                     title: 'Мэдээлэл алга',
                     message: 'Нийтлэгдсэн мэдээлэл энд харагдана.',
                   ),
                 ...items.map(
                   (item) => Card(
                     child: ListTile(
-                      leading: const Icon(Icons.location_city),
+                      leading: Icon(Icons.location_city),
                       title: Text('${item['name']}'),
                       subtitle: Text('${item['property_count']} зар'),
-                      trailing: const Icon(Icons.chevron_right),
+                      trailing: Icon(Icons.chevron_right),
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -104,7 +104,7 @@ class _DiscoveryPageState extends State<DiscoveryPage> {
                 if (hasNext)
                   OutlinedButton(
                     onPressed: loading ? null : () => load(more: true),
-                    child: const Text('Цааш үзэх'),
+                    child: Text('Цааш үзэх'),
                   ),
               ],
             ),
@@ -158,7 +158,7 @@ class _DiscoveryDetailPageState extends State<DiscoveryDetailPage> {
     return Scaffold(
       appBar: AppBar(title: Text('${d?['name'] ?? 'Дэлгэрэнгүй'}')),
       body: loading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(child: CircularProgressIndicator())
           : error != null
           ? EmptyState(
               title: 'Ачаалж чадсангүй',
@@ -166,13 +166,13 @@ class _DiscoveryDetailPageState extends State<DiscoveryDetailPage> {
               onRetry: load,
             )
           : ListView(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(20),
               children: [
                 Text(
                   '${d!['name']}',
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Text(
                   '${d['description']}'.isEmpty
                       ? 'Тайлбар оруулаагүй.'
@@ -182,14 +182,14 @@ class _DiscoveryDetailPageState extends State<DiscoveryDetailPage> {
                 Text('${d['property_count']} зар'),
                 if (district)
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: EdgeInsets.symmetric(vertical: 16),
                     child: Text(
                       d['average_sale_price_per_m2'] == null
                           ? 'Үнийн мэдээлэл хүрэлцэхгүй байна.'
                           : 'Худалдах зарын дундаж: ${money(double.parse(d['average_sale_price_per_m2'] as String))} / м²\nАппад нийтлэгдсэн заруудаар тооцсон.',
                     ),
                   ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 FilledButton(
                   onPressed: () => Navigator.push(
                     context,
@@ -203,12 +203,12 @@ class _DiscoveryDetailPageState extends State<DiscoveryDetailPage> {
                       ),
                     ),
                   ),
-                  child: const Text('Заруудыг үзэх'),
+                  child: Text('Заруудыг үзэх'),
                 ),
                 if (!district)
                   OutlinedButton.icon(
-                    icon: const Icon(Icons.reviews_outlined),
-                    label: const Text('Тав тухын үнэлгээ, сэтгэгдэл'),
+                    icon: Icon(Icons.reviews_outlined),
+                    label: Text('Тав тухын үнэлгээ, сэтгэгдэл'),
                     onPressed: () => Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -231,7 +231,7 @@ class _DiscoveryDetailPageState extends State<DiscoveryDetailPage> {
                         ),
                       ),
                     ),
-                    child: const Text('Хотхонуудыг судлах'),
+                    child: Text('Хотхонуудыг судлах'),
                   ),
               ],
             ),

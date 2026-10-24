@@ -38,7 +38,7 @@ class _FilterSheetState extends State<FilterSheet> {
 
   Widget number(String key, String label) => TextFormField(
     controller: numbers[key],
-    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+    keyboardType: TextInputType.numberWithOptions(decimal: true),
     decoration: InputDecoration(labelText: label),
     validator: (v) {
       if (v == null || v.trim().isEmpty) {
@@ -63,7 +63,7 @@ class _FilterSheetState extends State<FilterSheet> {
         isExpanded: true,
         decoration: InputDecoration(labelText: label),
         items: [
-          const DropdownMenuItem(value: '', child: Text('Бүгд')),
+          DropdownMenuItem(value: '', child: Text('Бүгд')),
           ...options.entries.map(
             (e) => DropdownMenuItem(value: e.key, child: Text(e.value)),
           ),
@@ -92,27 +92,24 @@ class _FilterSheetState extends State<FilterSheet> {
                     widget.recommendations
                         ? 'Танд тохирох байр'
                         : 'Хайлтын шүүлтүүр',
-                    style: const TextStyle(
-                      fontSize: 23,
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: TextStyle(fontSize: 23, fontWeight: FontWeight.w700),
                   ),
                 ),
                 IconButton(
                   tooltip: 'Хаах',
                   onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.close),
+                  icon: Icon(Icons.close),
                 ),
               ],
             ),
-            const SizedBox(height: 20),
-            const Text('Дүүрэг', style: TextStyle(fontWeight: FontWeight.w600)),
-            const SizedBox(height: 6),
-            const Text(
+            SizedBox(height: 20),
+            Text('Дүүрэг', style: TextStyle(fontWeight: FontWeight.w600)),
+            SizedBox(height: 6),
+            Text(
               'Хэд хэдэн дүүрэг сонгож болно.',
-              style: TextStyle(fontSize: 12, color: Colors.grey),
+              style: TextStyle(fontSize: 12),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -128,29 +125,29 @@ class _FilterSheetState extends State<FilterSheet> {
                   ),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             select('property_type', 'Үл хөдлөхийн төрөл', propertyTypes),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             select('rooms', 'Өрөөний тоо', {
               for (var n = 1; n <= 10; n++) '$n': '$n өрөө',
             }),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Row(
               children: [
                 Expanded(child: number('min_price', 'Доод үнэ • ₮')),
-                const SizedBox(width: 12),
+                SizedBox(width: 12),
                 Expanded(child: number('max_price', 'Дээд үнэ • ₮')),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Row(
               children: [
                 Expanded(child: number('min_area', 'Доод талбай • м²')),
-                const SizedBox(width: 12),
+                SizedBox(width: 12),
                 Expanded(child: number('max_area', 'Дээд талбай • м²')),
               ],
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24),
             FilledButton(
               onPressed: () {
                 if (!form.currentState!.validate()) return;
@@ -160,7 +157,7 @@ class _FilterSheetState extends State<FilterSheet> {
                 query.removeWhere((k, v) => v.isEmpty);
                 Navigator.pop(context, query);
               },
-              child: const Text('Үр дүнг харах'),
+              child: Text('Үр дүнг харах'),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, <String, String>{
@@ -173,7 +170,7 @@ class _FilterSheetState extends State<FilterSheet> {
                 if (widget.query['search']?.isNotEmpty == true)
                   'search': widget.query['search']!,
               }),
-              child: const Text('Бүх шүүлтүүр арилгах'),
+              child: Text('Бүх шүүлтүүр арилгах'),
             ),
           ],
         ),

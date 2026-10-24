@@ -22,7 +22,18 @@ class HomeHero extends StatelessWidget {
       return Container(
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-          color: const Color(0xFF123F35),
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [AppColors.turquoise, AppColors.blue, AppColors.lavender],
+          ),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x2483C5E6),
+              blurRadius: 24,
+              offset: Offset(0, 10),
+            ),
+          ],
           borderRadius: BorderRadius.circular(28),
         ),
         child: Stack(
@@ -35,10 +46,39 @@ class HomeHero extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 7,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: .10),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: .16),
+                      ),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.home_outlined,
+                          size: 15,
+                          color: Color(0xFFFFFFFF),
+                        ),
+                        SizedBox(width: 6),
+                        Text(
+                          'Таны дараагийн гэр',
+                          style: TextStyle(color: Colors.black, fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 18),
                   const Text(
                     'Байр хайх',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                       fontSize: 30,
                       fontWeight: FontWeight.w600,
                     ),
@@ -47,7 +87,7 @@ class HomeHero extends StatelessWidget {
                   const Text(
                     'Худалдах, түрээслэх үл хөдлөх хөрөнгийн зарууд.',
                     style: TextStyle(
-                      color: Color(0xFFC1D4CC),
+                      color: Colors.black,
                       fontSize: 14,
                       height: 1.5,
                     ),
@@ -67,14 +107,14 @@ class HomeHero extends StatelessWidget {
                       controller: search,
                       textInputAction: TextInputAction.search,
                       onSubmitted: (_) => onSearch(),
-                      style: const TextStyle(color: AppColors.text),
+                      style: const TextStyle(color: Colors.black),
                       decoration: InputDecoration(
                         fillColor: Colors.white,
                         filled: true,
                         hintText: 'Дүүрэг, хотхон, байршлаар хайх...',
                         hintStyle: const TextStyle(
                           fontSize: 13,
-                          color: AppColors.secondaryText,
+                          color: Colors.black,
                         ),
                         prefixIcon: const Icon(
                           Icons.search,
@@ -83,6 +123,10 @@ class HomeHero extends StatelessWidget {
                         suffixIcon: Padding(
                           padding: const EdgeInsets.all(6),
                           child: IconButton.filled(
+                            style: IconButton.styleFrom(
+                              backgroundColor: AppColors.turquoise,
+                              foregroundColor: Colors.black,
+                            ),
                             onPressed: onSearch,
                             tooltip: 'Хайх',
                             icon: const Icon(Icons.arrow_forward),
@@ -115,11 +159,9 @@ class HomeHero extends StatelessWidget {
     onPressed: () => onTypeChanged(value),
     style: TextButton.styleFrom(
       backgroundColor: listingType == value
-          ? const Color(0xFFD9E9AF)
-          : Colors.white.withValues(alpha: .08),
-      foregroundColor: listingType == value
-          ? const Color(0xFF173D32)
-          : Colors.white,
+          ? const Color(0xFF83E6D6)
+          : Colors.white.withValues(alpha: .35),
+      foregroundColor: Colors.black,
       padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     ),
@@ -135,10 +177,10 @@ class _Architecture extends CustomPainter {
     if (!wide) return;
     final x = size.width * .72;
     final paint = Paint()
-      ..color = const Color(0xFFB4D59B).withValues(alpha: .13);
+      ..color = const Color(0xFFFFFFFF).withValues(alpha: .25);
     canvas.drawCircle(Offset(size.width * .92, size.height * .25), 125, paint);
     final line = Paint()
-      ..color = const Color(0xFFAAC7A0).withValues(alpha: .30)
+      ..color = const Color(0xFF34465E).withValues(alpha: .22)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.2;
     final building = Path()

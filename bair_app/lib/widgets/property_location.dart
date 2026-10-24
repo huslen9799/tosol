@@ -24,12 +24,12 @@ class PropertyLocation extends StatelessWidget {
         if (labels.isNotEmpty)
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.location_on_rounded,
                 size: 16,
                 color: AppColors.primary,
               ),
-              const SizedBox(width: 4),
+              SizedBox(width: 4),
               Expanded(
                 child: Text(
                   labels.join(' · '),
@@ -38,23 +38,18 @@ class PropertyLocation extends StatelessWidget {
                   style: TextStyle(
                     fontSize: compact ? 11 : 14,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.primary,
                   ),
                 ),
               ),
             ],
           ),
         if (property.location.trim().isNotEmpty) ...[
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             property.location,
             maxLines: compact ? 1 : 3,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: compact ? 11 : 13,
-              color: AppColors.secondaryText,
-              height: 1.4,
-            ),
+            style: TextStyle(fontSize: compact ? 11 : 13, height: 1.4),
           ),
         ],
       ],

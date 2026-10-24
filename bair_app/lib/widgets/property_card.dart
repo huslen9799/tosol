@@ -15,7 +15,7 @@ Future<bool> requireLogin(BuildContext context) async {
   if (!store.loggedIn) {
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const LoginPage()),
+      MaterialPageRoute(builder: (_) => LoginPage()),
     );
   }
   return store.loggedIn;
@@ -28,12 +28,25 @@ class PropertyImageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget fallback() => Container(
-      color: const Color(0xFFEDF4EE),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFFEDFBF8), Color(0xFFE3ECFA)],
+        ),
+      ),
       alignment: Alignment.center,
-      child: const Icon(
-        Icons.apartment_rounded,
-        size: 64,
-        color: Color(0xFF93A49C),
+      child: Container(
+        padding: EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: .55),
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Icon(
+          Icons.apartment_rounded,
+          size: 48,
+          color: Color(0xFF8394E6),
+        ),
       ),
     );
     return SizedBox(
@@ -48,9 +61,9 @@ class PropertyImageView extends StatelessWidget {
               loadingBuilder: (_, child, progress) => progress == null
                   ? child
                   : Container(
-                      color: const Color(0xFFEDF4EE),
+                      color: Color(0xFFEDFBF8),
                       alignment: Alignment.center,
-                      child: const CircularProgressIndicator(strokeWidth: 2),
+                      child: CircularProgressIndicator(strokeWidth: 2),
                     ),
             ),
     );
@@ -67,8 +80,8 @@ class SaveButton extends StatelessWidget {
     return IconButton.filledTonal(
       tooltip: saved ? 'Хадгалснаас хасах' : 'Байр хадгалах',
       style: IconButton.styleFrom(
-        backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF285747),
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        foregroundColor: Color(0xFF8394E6),
       ),
       icon: Icon(
         saved ? Icons.favorite_rounded : Icons.favorite_border_rounded,
@@ -113,18 +126,18 @@ class PropertyCard extends StatelessWidget {
                       top: 12,
                       left: 12,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric(
                           horizontal: 12,
                           vertical: 7,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF285747),
+                          color: Color(0xFF83E6D6),
                           borderRadius: BorderRadius.circular(9),
                         ),
                         child: Text(
                           property.typeLabel,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: Colors.black,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -141,51 +154,49 @@ class PropertyCard extends StatelessWidget {
                         right: 12,
                         child: Chip(
                           visualDensity: VisualDensity.compact,
-                          avatar: const Icon(
-                            Icons.photo_library_outlined,
-                            size: 16,
-                          ),
+                          avatar: Icon(Icons.photo_library_outlined, size: 16),
                           label: Text('${property.imageUrls.length}'),
                         ),
                       ),
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       PropertyLocation(property: property),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12),
                       Text(
                         property.priceLabel,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.w800,
-                          color: Color(0xFF172D29),
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8),
                       Text(
                         property.title,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      const Divider(height: 24, color: Color(0xFFF0F3EB)),
+                      SizedBox(height: 8),
+                      Divider(height: 24, color: Color(0xFFEEF4FB)),
                       Wrap(
                         spacing: 18,
                         runSpacing: 6,
                         children: [
-                          Text('${property.rooms} өрөө'),
-                          Text(
+                          _fact(Icons.bed_outlined, '${property.rooms} өрөө'),
+                          _fact(
+                            Icons.square_foot_rounded,
                             '${property.area.toStringAsFixed(property.area % 1 == 0 ? 0 : 1)} м²',
                           ),
-                          Text(
+                          _fact(
+                            Icons.layers_outlined,
                             '${property.floor}/${property.totalFloors} давхар',
                           ),
                         ],
@@ -203,7 +214,7 @@ class PropertyCard extends StatelessWidget {
   );
 
   Widget _compact(BuildContext context) => Padding(
-    padding: const EdgeInsets.all(12),
+    padding: EdgeInsets.all(12),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -220,18 +231,15 @@ class PropertyCard extends StatelessWidget {
                   left: 4,
                   top: 4,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 5,
-                      vertical: 3,
-                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF285747),
+                      color: Color(0xFF83E6D6),
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: Text(
                       property.typeLabel,
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: Colors.black,
                         fontSize: 9,
                         fontWeight: FontWeight.w600,
                       ),
@@ -242,13 +250,13 @@ class PropertyCard extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(width: 10),
+        SizedBox(width: 10),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               PropertyLocation(property: property, compact: true),
-              const SizedBox(height: 7),
+              SizedBox(height: 7),
               Row(
                 children: [
                   Expanded(
@@ -256,7 +264,7 @@ class PropertyCard extends StatelessWidget {
                       property.title,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                         height: 1.25,
@@ -270,27 +278,23 @@ class PropertyCard extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 3),
+              SizedBox(height: 3),
               FittedBox(
                 fit: BoxFit.scaleDown,
                 alignment: Alignment.centerLeft,
                 child: Text(
                   property.priceLabel,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w800,
-                    color: Color(0xFF172D29),
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
                 ),
               ),
-              const SizedBox(height: 5),
+              SizedBox(height: 5),
               Row(
                 children: [
-                  const Spacer(),
+                  Spacer(),
                   CompareButton(property: property, compact: true),
                 ],
               ),
-              const SizedBox(height: 6),
+              SizedBox(height: 6),
               Wrap(
                 spacing: 8,
                 runSpacing: 4,
@@ -315,12 +319,9 @@ class PropertyCard extends StatelessWidget {
   Widget _fact(IconData icon, String text) => Row(
     mainAxisSize: MainAxisSize.min,
     children: [
-      Icon(icon, size: 13, color: const Color(0xFF62736D)),
-      const SizedBox(width: 3),
-      Text(
-        text,
-        style: const TextStyle(fontSize: 10, color: Color(0xFF62736D)),
-      ),
+      Icon(icon, size: 13, color: Color(0xFF647187)),
+      SizedBox(width: 3),
+      Text(text, style: TextStyle(fontSize: 12)),
     ],
   );
 }
@@ -383,25 +384,21 @@ class EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Center(
     child: Padding(
-      padding: const EdgeInsets.all(28),
+      padding: EdgeInsets.all(28),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
-            Icons.home_work_outlined,
-            size: 54,
-            color: Color(0xFF93A49C),
-          ),
-          const SizedBox(height: 16),
+          Icon(Icons.home_work_outlined, size: 54, color: Color(0xFF8796AD)),
+          SizedBox(height: 16),
           Text(
             title,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.titleLarge,
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(message, textAlign: TextAlign.center),
           if (onRetry != null) ...[
-            const SizedBox(height: 18),
+            SizedBox(height: 18),
             FilledButton(onPressed: onRetry, child: Text(buttonLabel)),
           ],
         ],

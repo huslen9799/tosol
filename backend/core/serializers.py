@@ -8,7 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
     def validate_username(self, value):
         if '@' in value:
             raise serializers.ValidationError('Хэрэглэгчийн нэрэнд @ тэмдэг ашиглахгүй.')
-        users = User.objects.filter(username__iexact=value)
+        users = User.objects.filter(username__exact=value)
         if self.instance:
             users = users.exclude(pk=self.instance.pk)
         if users.exists():

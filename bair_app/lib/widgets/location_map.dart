@@ -191,7 +191,9 @@ class _LocationMapState extends State<LocationMap> {
                           unproject(origin + details.localPosition),
                         ),
                   child: ColoredBox(
-                    color: const Color(0xFFF0F3EB),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .surfaceContainerHighest,
                     child: Stack(children: tiles),
                   ),
                 ),
@@ -208,18 +210,18 @@ class _LocationMapState extends State<LocationMap> {
                   child: FilledButton(
                     style: FilledButton.styleFrom(
                       backgroundColor: pin.selected
-                          ? const Color(0xFF173D32)
-                          : Colors.white,
+                          ? Color(0xFF8394E6)
+                          : Theme.of(context).colorScheme.surface,
                       foregroundColor: pin.selected
                           ? Colors.white
-                          : const Color(0xFF173D32),
+                          : Color(0xFF8394E6),
                       elevation: pin.selected ? 5 : 2,
                       side: BorderSide(
                         color: pin.selected
-                            ? const Color(0xFF173D32)
-                            : const Color(0xFFDFE6DC),
+                            ? Color(0xFF8394E6)
+                            : Color(0xFFDCE6F4),
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 6),
+                      padding: EdgeInsets.symmetric(horizontal: 6),
                     ),
                     onPressed: pin.onTap ?? () {},
                     child: Text(
@@ -239,14 +241,14 @@ class _LocationMapState extends State<LocationMap> {
                     heroTag: null,
                     tooltip: 'Томруулах',
                     onPressed: zoom < 18 ? () => changeZoom(1) : null,
-                    child: const Icon(Icons.add),
+                    child: Icon(Icons.add),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   FloatingActionButton.small(
                     heroTag: null,
                     tooltip: 'Жижигрүүлэх',
                     onPressed: zoom > 2 ? () => changeZoom(-1) : null,
-                    child: const Icon(Icons.remove),
+                    child: Icon(Icons.remove),
                   ),
                 ],
               ),
@@ -257,13 +259,13 @@ class _LocationMapState extends State<LocationMap> {
                 right: 64,
                 top: 8,
                 child: Material(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(8),
                   child: Padding(
-                    padding: const EdgeInsets.all(8),
+                    padding: EdgeInsets.all(8),
                     child: Column(
                       children: [
-                        const Text(
+                        Text(
                           'Газрын зураг ачаалж чадсангүй. Интернэтээ шалгана уу.',
                         ),
                         TextButton(
@@ -271,7 +273,7 @@ class _LocationMapState extends State<LocationMap> {
                             tileError = false;
                             tileRevision++;
                           }),
-                          child: const Text('Дахин ачаалах'),
+                          child: Text('Дахин ачаалах'),
                         ),
                       ],
                     ),
@@ -282,12 +284,12 @@ class _LocationMapState extends State<LocationMap> {
               right: 0,
               bottom: 0,
               child: Material(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
                 child: InkWell(
                   onTap: () => launchUrl(
                     Uri.parse('https://www.openstreetmap.org/copyright'),
                   ),
-                  child: const Padding(
+                  child: Padding(
                     padding: EdgeInsets.all(5),
                     child: Text(
                       '© OpenStreetMap contributors',
@@ -321,10 +323,10 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Байрны байршил сонгох')),
+    appBar: AppBar(title: Text('Байрны байршил сонгох')),
     body: Column(
       children: [
-        const Padding(
+        Padding(
           padding: EdgeInsets.all(16),
           child: Text(
             'Газрын зургийг хөдөлгөж, байрныхаа цэгийг дарж сонгоно уу.',
@@ -332,7 +334,7 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
         ),
         Expanded(
           child: LocationMap(
-            initialCenter: point ?? const MapPoint(47.9185, 106.9177),
+            initialCenter: point ?? MapPoint(47.9185, 106.9177),
             onSelect: (p) => setState(() => point = p),
             pins: [if (point != null) MapPin(point!, 'Сонгосон цэг')],
           ),
@@ -340,12 +342,12 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
         SafeArea(
           top: false,
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16),
             child: FilledButton(
               onPressed: point == null
                   ? null
                   : () => Navigator.pop(context, point),
-              child: const Text('Энэ байршлыг сонгох'),
+              child: Text('Энэ байршлыг сонгох'),
             ),
           ),
         ),

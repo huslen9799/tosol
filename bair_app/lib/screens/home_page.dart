@@ -102,9 +102,9 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Row(
                     children: [
-                      const BrandMark(size: 32),
-                      const SizedBox(width: 10),
-                      const Expanded(
+                      BrandMark(size: 32),
+                      SizedBox(width: 10),
+                      Expanded(
                         child: Text(
                           'Өргөө',
                           style: TextStyle(
@@ -115,19 +115,16 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       if (wide)
-                        const Text(
-                          'Үл хөдлөх хөрөнгийн зар',
-                          style: TextStyle(color: AppColors.secondaryText),
-                        ),
-                      const SizedBox(width: 16),
+                        Text('Үл хөдлөх хөрөнгийн зар', style: TextStyle()),
+                      SizedBox(width: 16),
                       OutlinedButton.icon(
                         onPressed: addListing,
-                        icon: const Icon(Icons.add, size: 18),
-                        label: const Text('Зар нэмэх'),
+                        icon: Icon(Icons.add, size: 18),
+                        label: Text('Зар нэмэх'),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24),
                   HomeHero(
                     search: search,
                     onSearch: browse,
@@ -137,8 +134,7 @@ class _HomePageState extends State<HomePage> {
                       load();
                     },
                   ),
-                  const SizedBox(height: 28),
-                  const SizedBox(height: 18),
+                  SizedBox(height: 24),
                   OutlinedButton.icon(
                     onPressed: () => Navigator.push(
                       context,
@@ -152,13 +148,13 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     ),
-                    icon: const Icon(Icons.map_outlined),
-                    label: const Padding(
+                    icon: Icon(Icons.map_outlined),
+                    label: Padding(
                       padding: EdgeInsets.symmetric(vertical: 16),
                       child: Text('Газрын зураг дээр байр хайх'),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   Wrap(
                     spacing: 10,
                     runSpacing: 10,
@@ -184,21 +180,18 @@ class _HomePageState extends State<HomePage> {
                         )
                         .toList(),
                   ),
-                  const SizedBox(height: 32),
+                  SizedBox(height: 32),
                   _heading('Дүүргээр хайх', 'Байршлаа сонгох'),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: districts
                           .map(
                             (d) => Padding(
-                              padding: const EdgeInsets.only(right: 10),
+                              padding: EdgeInsets.only(right: 10),
                               child: ActionChip(
-                                avatar: const Icon(
-                                  Icons.place_outlined,
-                                  size: 17,
-                                ),
+                                avatar: Icon(Icons.place_outlined, size: 17),
                                 label: Text(d),
                                 onPressed: () => browse(district: d),
                               ),
@@ -207,7 +200,7 @@ class _HomePageState extends State<HomePage> {
                           .toList(),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   Wrap(
                     spacing: 8,
                     runSpacing: 4,
@@ -216,38 +209,38 @@ class _HomePageState extends State<HomePage> {
                         onPressed: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const DiscoveryPage(
+                            builder: (_) => DiscoveryPage(
                               kind: 'districts',
                               title: 'Дүүрэг судлах',
                             ),
                           ),
                         ),
-                        icon: const Icon(Icons.explore_outlined, size: 18),
-                        label: const Text('Дүүрэг судлах'),
+                        icon: Icon(Icons.explore_outlined, size: 18),
+                        label: Text('Дүүрэг судлах'),
                       ),
                       TextButton.icon(
                         onPressed: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const DiscoveryPage(
+                            builder: (_) => DiscoveryPage(
                               kind: 'complexes',
                               title: 'Хотхонууд',
                             ),
                           ),
                         ),
-                        icon: const Icon(Icons.location_city, size: 18),
-                        label: const Text('Хотхонууд'),
+                        icon: Icon(Icons.location_city, size: 18),
+                        label: Text('Хотхонууд'),
                       ),
                       TextButton.icon(
                         onPressed: recommendations,
-                        icon: const Icon(Icons.tune, size: 18),
-                        label: const Text('Танд тохирох байр'),
+                        icon: Icon(Icons.tune, size: 18),
+                        label: Text('Танд тохирох байр'),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 28),
+                  SizedBox(height: 28),
                   if (loading)
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.all(32),
                       child: Center(child: CircularProgressIndicator()),
                     )
@@ -260,12 +253,12 @@ class _HomePageState extends State<HomePage> {
                   else ...[
                     if (featured.isNotEmpty) ...[
                       _sectionTitle('Онцлох байр', 'Анхаарал татах сонголтууд'),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
                       _listings(featured, constraints.maxWidth),
-                      const SizedBox(height: 32),
+                      SizedBox(height: 32),
                     ],
                     _sectionTitle('Шинээр нэмэгдсэн', 'Сүүлд нэмэгдсэн зарууд'),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     if (items.isEmpty)
                       EmptyState(
                         title: 'Эхний зарыг нэмээрэй',
@@ -276,23 +269,23 @@ class _HomePageState extends State<HomePage> {
                     else
                       _listings(items, constraints.maxWidth),
                   ],
-                  const SizedBox(height: 36),
+                  SizedBox(height: 36),
                   Container(
                     padding: EdgeInsets.all(wide ? 32 : 24),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFE8EFD9),
+                      color: Theme.of(context).colorScheme.tertiaryContainer,
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.key_outlined,
                           color: AppColors.primary,
                           size: 30,
                         ),
-                        const SizedBox(height: 14),
-                        const Text(
+                        SizedBox(height: 14),
+                        Text(
                           'Зар нийтлэх',
                           style: TextStyle(
                             fontSize: 27,
@@ -301,35 +294,28 @@ class _HomePageState extends State<HomePage> {
                             letterSpacing: -.7,
                           ),
                         ),
-                        const SizedBox(height: 12),
-                        const Text(
+                        SizedBox(height: 12),
+                        Text(
                           'Худалдах эсвэл түрээслэх байраа танилцуулаарай.',
-                          style: TextStyle(
-                            color: AppColors.secondaryText,
-                            height: 1.6,
-                          ),
+                          style: TextStyle(height: 1.6),
                         ),
-                        const SizedBox(height: 20),
+                        SizedBox(height: 20),
                         FilledButton.icon(
                           onPressed: addListing,
-                          icon: const Icon(Icons.add),
-                          label: const Text('Зар нэмэх'),
+                          icon: Icon(Icons.add),
+                          label: Text('Зар нэмэх'),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 32),
-                  const Center(
+                  SizedBox(height: 32),
+                  Center(
                     child: Text(
                       'ӨРГӨӨ · Үл хөдлөх хөрөнгө',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: AppColors.secondaryText,
-                        letterSpacing: 1.2,
-                      ),
+                      style: TextStyle(fontSize: 11, letterSpacing: 1.2),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                 ],
               );
             },
@@ -342,14 +328,11 @@ class _HomePageState extends State<HomePage> {
   Widget _heading(String title, String subtitle) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text(
-        subtitle,
-        style: const TextStyle(color: AppColors.secondaryText, fontSize: 12),
-      ),
-      const SizedBox(height: 6),
+      Text(subtitle, style: TextStyle(fontSize: 12)),
+      SizedBox(height: 6),
       Text(
         title,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 22,
           fontWeight: FontWeight.w800,
           letterSpacing: -.5,
@@ -361,7 +344,7 @@ class _HomePageState extends State<HomePage> {
   Widget _sectionTitle(String title, String subtitle) => Row(
     children: [
       Expanded(child: _heading(title, subtitle)),
-      TextButton(onPressed: browse, child: const Text('Бүгдийг үзэх →')),
+      TextButton(onPressed: browse, child: Text('Бүгдийг үзэх →')),
     ],
   );
 
@@ -392,7 +375,7 @@ class _HomePageState extends State<HomePage> {
     if (!await requireLogin(context) || !mounted) return;
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const PropertyFormPage()),
+      MaterialPageRoute(builder: (_) => PropertyFormPage()),
     );
   }
 

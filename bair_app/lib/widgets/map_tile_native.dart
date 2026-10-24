@@ -36,18 +36,15 @@ class _CachedMapTileState extends State<_CachedMapTile> {
     try {
       if (await file.exists() &&
           DateTime.now().difference(await file.lastModified()) <
-              const Duration(days: 7)) {
+              Duration(days: 7)) {
         return await file.readAsBytes();
       }
     } on FileSystemException {
       /* A missing cache must not prevent map display. */
     }
     final response = await http
-        .get(
-          Uri.parse(widget.url),
-          headers: const {'User-Agent': 'UrgooBair/1.0'},
-        )
-        .timeout(const Duration(seconds: 20));
+        .get(Uri.parse(widget.url), headers: {'User-Agent': 'UrgooBair/1.0'})
+        .timeout(Duration(seconds: 20));
     if (response.statusCode != 200) {
       throw HttpException('Tile ${response.statusCode}');
     }
@@ -66,16 +63,16 @@ class _CachedMapTileState extends State<_CachedMapTile> {
     builder: (_, snapshot) {
       if (snapshot.hasError) {
         widget.onError();
-        return const ColoredBox(color: Color(0xFFF0F3EB));
+        return ColoredBox(color: Color(0xFFEEF4FB));
       }
-      if (!snapshot.hasData) return const ColoredBox(color: Color(0xFFF0F3EB));
+      if (!snapshot.hasData) return ColoredBox(color: Color(0xFFEEF4FB));
       return Image.memory(
         snapshot.data!,
         fit: BoxFit.fill,
         gaplessPlayback: true,
         errorBuilder: (_, error, stack) {
           widget.onError();
-          return const ColoredBox(color: Color(0xFFF0F3EB));
+          return ColoredBox(color: Color(0xFFEEF4FB));
         },
       );
     },

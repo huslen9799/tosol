@@ -94,7 +94,7 @@ class _PropertyPageState extends State<PropertyPage> {
 
   void searchChanged(String value) {
     debounce?.cancel();
-    debounce = Timer(const Duration(milliseconds: 400), () {
+    debounce = Timer(Duration(milliseconds: 400), () {
       query['search'] = value.trim();
       load();
     });
@@ -176,11 +176,11 @@ class _PropertyPageState extends State<PropertyPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: widget.standalone,
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w700)),
+        title: Text(title, style: TextStyle(fontWeight: FontWeight.w700)),
         actions: [
           IconButton(
             tooltip: 'Газрын зураг дээр хайх',
-            icon: const Icon(Icons.map_outlined),
+            icon: Icon(Icons.map_outlined),
             onPressed: () {
               debounce?.cancel();
               query['search'] = search.text.trim();
@@ -203,11 +203,11 @@ class _PropertyPageState extends State<PropertyPage> {
             tooltip: 'Байр харьцуулах',
             icon: Badge(
               label: Text('${AppScope.of(context).comparison.length}'),
-              child: const Icon(Icons.compare_arrows),
+              child: Icon(Icons.compare_arrows),
             ),
             onPressed: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const ComparePage()),
+              MaterialPageRoute(builder: (_) => ComparePage()),
             ),
           ),
         ],
@@ -215,7 +215,7 @@ class _PropertyPageState extends State<PropertyPage> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
+            padding: EdgeInsets.fromLTRB(20, 8, 20, 12),
             child: TextField(
               controller: search,
               onChanged: searchChanged,
@@ -226,7 +226,7 @@ class _PropertyPageState extends State<PropertyPage> {
               },
               decoration: InputDecoration(
                 hintText: 'Хотхон, дүүрэг, хаяг',
-                prefixIcon: const Icon(Icons.search),
+                prefixIcon: Icon(Icons.search),
                 suffixIcon: IconButton(
                   tooltip: 'Шүүлтүүр',
                   onPressed: filters,
@@ -235,7 +235,7 @@ class _PropertyPageState extends State<PropertyPage> {
                       (k) =>
                           !['search', 'ordering', 'listing_type'].contains(k),
                     ),
-                    child: const Icon(Icons.tune),
+                    child: Icon(Icons.tune),
                   ),
                 ),
               ),
@@ -244,10 +244,10 @@ class _PropertyPageState extends State<PropertyPage> {
           SizedBox(
             height: 52,
             child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(horizontal: 20),
               scrollDirection: Axis.horizontal,
               itemCount: districts.length + 1,
-              separatorBuilder: (_, index) => const SizedBox(width: 8),
+              separatorBuilder: (_, index) => SizedBox(width: 8),
               itemBuilder: (_, index) {
                 final district = index == 0 ? '' : districts[index - 1];
                 return FilterChip(
@@ -268,15 +268,15 @@ class _PropertyPageState extends State<PropertyPage> {
               },
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               children: [
                 Expanded(
                   child: SegmentedButton<String>(
                     showSelectedIcon: false,
-                    segments: const [
+                    segments: [
                       ButtonSegment(value: '', label: Text('Бүгд')),
                       ButtonSegment(value: 'sale', label: Text('Худалдах')),
                       ButtonSegment(value: 'rent', label: Text('Түрээс')),
@@ -291,21 +291,16 @@ class _PropertyPageState extends State<PropertyPage> {
               ],
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               children: [
-                Expanded(
-                  child: Text(
-                    '$count зар',
-                    style: const TextStyle(color: Colors.grey),
-                  ),
-                ),
+                Expanded(child: Text('$count зар', style: TextStyle())),
                 DropdownButton<String>(
                   value: query['ordering'] ?? '-created_at',
-                  underline: const SizedBox.shrink(),
-                  items: const [
+                  underline: SizedBox.shrink(),
+                  items: [
                     DropdownMenuItem(
                       value: '-created_at',
                       child: Text('Шинэ эхэнд'),
@@ -335,7 +330,7 @@ class _PropertyPageState extends State<PropertyPage> {
           ),
           Expanded(
             child: loading
-                ? const Center(child: CircularProgressIndicator())
+                ? Center(child: CircularProgressIndicator())
                 : error != null && items.isEmpty
                 ? EmptyState(
                     title: 'Зар ачаалж чадсангүй',
@@ -345,8 +340,8 @@ class _PropertyPageState extends State<PropertyPage> {
                 : RefreshIndicator(
                     onRefresh: load,
                     child: ListView(
-                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
-                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: EdgeInsets.fromLTRB(20, 8, 20, 100),
+                      physics: AlwaysScrollableScrollPhysics(),
                       children: [
                         if (query.keys.any(
                           (k) => ![
@@ -356,7 +351,7 @@ class _PropertyPageState extends State<PropertyPage> {
                           ].contains(k),
                         ))
                           Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
+                            padding: EdgeInsets.only(bottom: 12),
                             child: Wrap(
                               spacing: 8,
                               runSpacing: 4,
@@ -396,7 +391,7 @@ class _PropertyPageState extends State<PropertyPage> {
                                     });
                                     load();
                                   },
-                                  child: const Text('Шүүлтүүр арилгах'),
+                                  child: Text('Шүүлтүүр арилгах'),
                                 ),
                               ],
                             ),
@@ -412,13 +407,13 @@ class _PropertyPageState extends State<PropertyPage> {
                           ),
                         ...items.map(
                           (p) => Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
+                            padding: EdgeInsets.only(bottom: 12),
                             child: PropertyCard(property: p, compact: true),
                           ),
                         ),
                         if (error != null)
                           Padding(
-                            padding: const EdgeInsets.all(12),
+                            padding: EdgeInsets.all(12),
                             child: Text(error!, textAlign: TextAlign.center),
                           ),
                         if (hasNext)
@@ -427,14 +422,14 @@ class _PropertyPageState extends State<PropertyPage> {
                                 ? null
                                 : () => load(more: true),
                             child: loadingMore
-                                ? const SizedBox(
+                                ? SizedBox(
                                     width: 20,
                                     height: 20,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
                                     ),
                                   )
-                                : const Text('Дараагийн зарууд'),
+                                : Text('Дараагийн зарууд'),
                           ),
                       ],
                     ),

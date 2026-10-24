@@ -8,7 +8,7 @@ from django.utils import timezone
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 
-from .models import District, PasswordResetCode
+from .models import District, EmailOTP, PasswordResetCode
 
 
 @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
@@ -23,6 +23,61 @@ class AccountManagementTests(APITestCase):
         self.assertEqual(response.status_code, 200)
         return {'reset_token': response.data['reset_token'], 'code': '123456',
                 'new_password': 'newpass123', 'password_confirm': 'newpass123'}
+
+    def test_login_accepts_exact_username_and_case_insensitive_gmail(self):
+        self.user.email = 'tester@gmail.com'
+        self.user.save(update_fields=['email'])
+        for identifier in ['tester', ' tester ', 'tester@gmail.com', ' TESTER@GMAIL.COM ']:
+            with self.subTest(identifier=identifier):
+                response = self.client.post('/api/login/', {
+                    'identifier': identifier, 'password': 'oldpass123',
+                }, format='json')
+                self.assertEqual(response.status_code, 200)
+                self.assertEqual(response.data['user']['id'], self.user.pk)
+                self.assertTrue(response.data['token'])
+
+    def test_username_case_variants_login_to_separate_accounts(self):
+        other = User.objects.create_user('Tester', 'other@gmail.com', 'otherpass123')
+        for identifier, password, expected in [
+            ('tester', 'oldpass123', self.user),
+            ('Tester', 'otherpass123', other),
+        ]:
+            response = self.client.post('/api/login/', {
+                'identifier': identifier, 'password': password,
+            }, format='json')
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.data['user']['id'], expected.pk)
+        for identifier, password in [('TESTER', 'oldpass123'), ('Tester', 'oldpass123')]:
+            response = self.client.post('/api/login/', {
+                'identifier': identifier, 'password': password,
+            }, format='json')
+            self.assertEqual(response.status_code, 401)
+
+    def test_registration_allows_case_variant_but_rejects_exact_duplicate(self):
+        data = {
+            'username': 'tester', 'email': 'new@gmail.com',
+            'password': 'newpass123', 'password_confirm': 'newpass123',
+        }
+        self.assertEqual(self.client.post('/api/register/', data, format='json').status_code, 400)
+        with patch('core.views.send_mail'):
+            response = self.client.post('/api/register/', {**data, 'username': 'Tester'}, format='json')
+        self.assertEqual(response.status_code, 200)
+        otp = EmailOTP.objects.get(email=data['email'])
+        response = self.client.post('/api/verify/', {
+            'email': otp.email, 'otp': otp.otp,
+        }, format='json')
+        self.assertEqual(response.status_code, 201)
+        self.assertTrue(User.objects.filter(username__exact='tester').exists())
+        self.assertTrue(User.objects.filter(username__exact='Tester').exists())
+
+    def test_login_rejects_invalid_credentials_for_both_identifiers(self):
+        for identifier in ['tester', self.user.email, 'unknown@gmail.com']:
+            with self.subTest(identifier=identifier):
+                response = self.client.post('/api/login/', {
+                    'identifier': identifier, 'password': 'wrong',
+                }, format='json')
+                self.assertEqual(response.status_code, 401)
+                self.assertNotIn('token', response.data)
 
     def test_reset_invalidates_token_and_rejects_replay(self):
         token = Token.objects.create(user=self.user)
@@ -88,7 +143,7 @@ class AccountManagementTests(APITestCase):
     def test_profile_rejects_duplicate_and_invalid_usernames(self):
         User.objects.create_user('taken', 'other@example.com', 'password123')
         self.client.force_authenticate(self.user)
-        for username in ['taken', 'TAKEN', '', 'bad name', 'email@example.com', 'x' * 151]:
+        for username in ['taken', '', 'bad name', 'email@example.com', 'x' * 151]:
             with self.subTest(username=username):
                 response = self.client.patch('/api/profile/', {'username': username}, format='json')
                 self.assertEqual(response.status_code, 400)
@@ -96,3 +151,11 @@ class AccountManagementTests(APITestCase):
         self.assertEqual(self.client.patch('/api/profile/', {'username': 'tester'}, format='json').status_code, 200)
         self.user.refresh_from_db()
         self.assertEqual(self.user.username, 'tester')
+
+    def test_profile_allows_username_differing_only_by_case(self):
+        User.objects.create_user('taken', 'other@example.com', 'password123')
+        self.client.force_authenticate(self.user)
+        response = self.client.patch('/api/profile/', {'username': 'TAKEN'}, format='json')
+        self.assertEqual(response.status_code, 200)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.username, 'TAKEN')

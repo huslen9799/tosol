@@ -19,18 +19,18 @@ class _ProfilePageState extends State<ProfilePage> {
     final yes = await showDialog<bool>(
       context: context,
       builder: (c) => AlertDialog(
-        title: const Text('Гарах уу?'),
-        content: const Text(
+        title: Text('Гарах уу?'),
+        content: Text(
           'Дахин нэвтэрч хадгалсан байр, заруудаа харах боломжтой.',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(c, false),
-            child: const Text('Болих'),
+            child: Text('Болих'),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(c, true),
-            child: const Text('Гарах'),
+            child: Text('Гарах'),
           ),
         ],
       ),
@@ -52,7 +52,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final user = AppScope.of(context).user;
     if (user == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Миний профайл')),
+        appBar: AppBar(title: Text('Миний профайл')),
         body: EmptyState(
           title: 'Өргөөнд тавтай морил',
           message: 'Нэвтэрч өөрийн зар, хадгалсан байр, профайлаа удирдаарай.',
@@ -64,50 +64,44 @@ class _ProfilePageState extends State<ProfilePage> {
       );
     }
     return Scaffold(
-      appBar: AppBar(title: const Text('Миний профайл')),
+      appBar: AppBar(title: Text('Миний профайл')),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.all(22),
+          padding: EdgeInsets.all(22),
           children: [
             Card(
               margin: EdgeInsets.zero,
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    const CircleAvatar(
+                    CircleAvatar(
                       radius: 28,
-                      backgroundColor: Color(0xFF285747),
+                      backgroundColor: Color(0xFF8394E6),
                       child: Icon(Icons.person, size: 36, color: Colors.white),
                     ),
-                    const SizedBox(width: 14),
+                    SizedBox(width: 14),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             'Тавтай морилно уу',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Color(0xFF62736D),
-                            ),
+                            style: TextStyle(fontSize: 12),
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: 4),
                           Text(
                             '${user['last_name']} ${user['first_name']}'.trim(),
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: 4),
                           Text(
                             '${user['email']}',
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Color(0xFF93A49C),
-                            ),
+                            style: TextStyle(fontSize: 12),
                           ),
                         ],
                       ),
@@ -116,14 +110,14 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24),
             _ProfileTile(
               icon: Icons.person_outline,
               title: 'Профайл засах',
               subtitle: 'Овог, нэр, хэрэглэгчийн нэрээ шинэчлэх',
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const ProfileEditPage()),
+                MaterialPageRoute(builder: (_) => ProfileEditPage()),
               ),
             ),
             _ProfileTile(
@@ -133,8 +127,7 @@ class _ProfilePageState extends State<ProfilePage> {
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) =>
-                      const PropertyPage(mine: true, standalone: true),
+                  builder: (_) => PropertyPage(mine: true, standalone: true),
                 ),
               ),
             ),
@@ -145,8 +138,7 @@ class _ProfilePageState extends State<ProfilePage> {
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) =>
-                      const PropertyPage(saved: true, standalone: true),
+                  builder: (_) => PropertyPage(saved: true, standalone: true),
                 ),
               ),
             ),
@@ -156,7 +148,7 @@ class _ProfilePageState extends State<ProfilePage> {
               subtitle: 'Худалдах эсвэл түрээслэх',
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const PropertyFormPage()),
+                MaterialPageRoute(builder: (_) => PropertyFormPage()),
               ),
             ),
             _ProfileTile(
@@ -165,7 +157,7 @@ class _ProfilePageState extends State<ProfilePage> {
               subtitle: 'Хуучин нууц үгээр шинэчлэх',
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const PasswordPage()),
+                MaterialPageRoute(builder: (_) => PasswordPage()),
               ),
             ),
             _ProfileTile(
@@ -174,9 +166,7 @@ class _ProfilePageState extends State<ProfilePage> {
               subtitle: 'Мартсан бол и-мэйл кодоор сэргээх',
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => const PasswordPage(forgot: true),
-                ),
+                MaterialPageRoute(builder: (_) => PasswordPage(forgot: true)),
               ),
             ),
             if (AppScope.of(context).isAdmin)
@@ -186,7 +176,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 subtitle: 'Бүх зар, хотхон, дүүрэг удирдах',
                 onTap: () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const AdminPage()),
+                  MaterialPageRoute(builder: (_) => AdminPage()),
                 ),
               ),
             _ProfileTile(
@@ -196,23 +186,23 @@ class _ProfilePageState extends State<ProfilePage> {
               onTap: () => showDialog<void>(
                 context: context,
                 builder: (dialogContext) => AlertDialog(
-                  title: const Text('Өргөө • 1.0.0'),
-                  content: const Text(
+                  title: Text('Өргөө • 2.0.0'),
+                  content: Text(
                     'Таны мөрөөдлийн байр.\n\nМонголын үл хөдлөх хөрөнгийг хайх, хадгалах, худалдах, түрээслэх апп.',
                   ),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(dialogContext),
-                      child: const Text('Хаах'),
+                      child: Text('Хаах'),
                     ),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 22),
+            SizedBox(height: 22),
             OutlinedButton.icon(
               onPressed: loggingOut ? null : logout,
-              icon: const Icon(Icons.logout),
+              icon: Icon(Icons.logout),
               label: Text(loggingOut ? 'Гарч байна...' : 'Гарах'),
             ),
           ],
@@ -234,14 +224,14 @@ class _ProfileTile extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 12),
+    padding: EdgeInsets.only(bottom: 12),
     child: Card(
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: Icon(icon, color: const Color(0xFF285747)),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        leading: Icon(icon, color: Color(0xFF8394E6)),
+        title: Text(title, style: TextStyle(fontWeight: FontWeight.w600)),
         subtitle: Text(subtitle),
-        trailing: const Icon(Icons.chevron_right),
+        trailing: Icon(Icons.chevron_right),
         onTap: onTap,
       ),
     ),
@@ -312,9 +302,9 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Профайл засах')),
+    appBar: AppBar(title: Text('Профайл засах')),
     body: SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(24),
       child: Form(
         key: form,
         child: Column(
@@ -324,21 +314,21 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
               controller: last,
               enabled: !saving,
               validator: validate,
-              decoration: const InputDecoration(labelText: 'Овог'),
+              decoration: InputDecoration(labelText: 'Овог'),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             TextFormField(
               controller: first,
               enabled: !saving,
               validator: validate,
-              decoration: const InputDecoration(labelText: 'Нэр'),
+              decoration: InputDecoration(labelText: 'Нэр'),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24),
             TextFormField(
               controller: username,
               enabled: !saving,
               autocorrect: false,
-              decoration: const InputDecoration(labelText: 'Хэрэглэгчийн нэр'),
+              decoration: InputDecoration(labelText: 'Хэрэглэгчийн нэр'),
               validator: (value) {
                 final error = validate(value);
                 if (error != null) return error;
@@ -350,7 +340,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                     : 'Үсэг, тоо, _, ., +, - тэмдэг ашиглана уу.';
               },
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24),
             FilledButton(
               onPressed: saving ? null : save,
               child: Text(saving ? 'Хадгалж байна...' : 'Хадгалах'),

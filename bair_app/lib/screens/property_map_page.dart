@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'filter_sheet.dart';
-import '../widgets/brand.dart';
 
 import '../models/property.dart';
 import '../services/app_store.dart';
@@ -63,7 +62,7 @@ class _PropertyMapPageState extends State<PropertyMapPage> {
     if (first) {
       search();
     } else if (autoSearch) {
-      debounce = Timer(const Duration(milliseconds: 550), search);
+      debounce = Timer(Duration(milliseconds: 550), search);
     }
   }
 
@@ -121,7 +120,7 @@ class _PropertyMapPageState extends State<PropertyMapPage> {
       builder: (_) => SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16),
             child: PropertyCard(property: p),
           ),
         ),
@@ -131,11 +130,11 @@ class _PropertyMapPageState extends State<PropertyMapPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Газрын зураг дээр хайх')),
+    appBar: AppBar(title: Text('Газрын зураг дээр хайх')),
     body: Column(
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+          padding: EdgeInsets.fromLTRB(16, 8, 16, 12),
           child: Row(
             children: [
               Expanded(
@@ -148,23 +147,23 @@ class _PropertyMapPageState extends State<PropertyMapPage> {
                   },
                   decoration: InputDecoration(
                     hintText: 'Дүүрэг, хотхон, байршил...',
-                    prefixIcon: const Icon(Icons.search),
+                    prefixIcon: Icon(Icons.search),
                     suffixIcon: IconButton(
                       tooltip: 'Хайх',
                       onPressed: () {
                         query['search'] = searchController.text.trim();
                         search();
                       },
-                      icon: const Icon(Icons.arrow_forward),
+                      icon: Icon(Icons.arrow_forward),
                     ),
                   ),
                 ),
               ),
-              const SizedBox(width: 10),
+              SizedBox(width: 10),
               IconButton.filledTonal(
                 onPressed: filters,
                 tooltip: 'Шүүлтүүр',
-                icon: const Icon(Icons.tune),
+                icon: Icon(Icons.tune),
               ),
             ],
           ),
@@ -178,7 +177,7 @@ class _PropertyMapPageState extends State<PropertyMapPage> {
                   Positioned.fill(
                     child: LocationMap(
                       initialCenter: selected == null
-                          ? const MapPoint(47.9185, 106.9177)
+                          ? MapPoint(47.9185, 106.9177)
                           : MapPoint(selected!.latitude!, selected!.longitude!),
                       tileBuilder: widget.tileBuilder,
                       onBoundsChanged: boundsChanged,
@@ -210,11 +209,11 @@ class _PropertyMapPageState extends State<PropertyMapPage> {
                     child: Align(
                       alignment: Alignment.topLeft,
                       child: Material(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.surface,
                         elevation: 2,
                         borderRadius: BorderRadius.circular(14),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(
+                          padding: EdgeInsets.symmetric(
                             horizontal: 12,
                             vertical: 4,
                           ),
@@ -231,7 +230,7 @@ class _PropertyMapPageState extends State<PropertyMapPage> {
                                   },
                                 ),
                               ),
-                              const Flexible(
+                              Flexible(
                                 child: Text(
                                   'Зөөхөд автоматаар хайх',
                                   style: TextStyle(fontSize: 12),
@@ -250,13 +249,13 @@ class _PropertyMapPageState extends State<PropertyMapPage> {
                     child: Center(
                       child: FilledButton.icon(
                         onPressed: loading ? null : search,
-                        icon: const Icon(Icons.search, size: 18),
-                        label: const Text('Энэ орчимд хайх'),
+                        icon: Icon(Icons.search, size: 18),
+                        label: Text('Энэ орчимд хайх'),
                       ),
                     ),
                   ),
                   if (loading)
-                    const Positioned(
+                    Positioned(
                       top: 0,
                       left: 0,
                       right: 0,
@@ -276,15 +275,11 @@ class _PropertyMapPageState extends State<PropertyMapPage> {
         SafeArea(
           top: false,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (error != null)
-                  Text(
-                    error!,
-                    style: const TextStyle(color: Colors.deepOrange),
-                  ),
+                if (error != null) Text(error!, style: TextStyle()),
                 Row(
                   children: [
                     Expanded(
@@ -294,7 +289,7 @@ class _PropertyMapPageState extends State<PropertyMapPage> {
                             : count == 0
                             ? 'Энэ хүрээнд тохирох зар алга.'
                             : '$count зар • ${items.length} тэмдэглэгээ',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 12,
                         ),
@@ -315,7 +310,7 @@ class _PropertyMapPageState extends State<PropertyMapPage> {
                   ],
                 ),
                 if (count > items.length)
-                  const Text(
+                  Text(
                     'Эхний 100 зар харагдаж байна. Зургийг томруулж хүрээгээ багасгаарай.',
                     style: TextStyle(fontSize: 11),
                   ),
@@ -339,22 +334,22 @@ class _PropertyMapPageState extends State<PropertyMapPage> {
       );
     }
     return ColoredBox(
-      color: AppColors.background,
+      color: Theme.of(context).scaffoldBackgroundColor,
       child: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         children: [
-          const Text(
+          Text(
             'Байршлаар нь харьцуулаарай',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
           ),
-          const SizedBox(height: 8),
-          const Text(
+          SizedBox(height: 8),
+          Text(
             'Газрын зураг дээр үнэ дээр дарж байраа сонгоорой.',
-            style: TextStyle(color: AppColors.secondaryText, height: 1.5),
+            style: TextStyle(height: 1.5),
           ),
-          const SizedBox(height: 18),
+          SizedBox(height: 18),
           if (!loading && items.isEmpty)
-            const Padding(
+            Padding(
               padding: EdgeInsets.symmetric(vertical: 32),
               child: Text(
                 'Газрын зургийг зөөх эсвэл шүүлтүүрээ өөрчилж хайгаарай.',
@@ -362,17 +357,16 @@ class _PropertyMapPageState extends State<PropertyMapPage> {
             ),
           for (final p in ordered)
             Padding(
-              padding: const EdgeInsets.only(bottom: 16),
+              padding: EdgeInsets.only(bottom: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   if (selected?.id == p.id)
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.only(bottom: 8),
                       child: Text(
                         'СОНГОСОН БАЙР',
                         style: TextStyle(
-                          color: AppColors.primary,
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 1,
@@ -385,8 +379,8 @@ class _PropertyMapPageState extends State<PropertyMapPage> {
                       selected = p;
                       showResults = false;
                     }),
-                    icon: const Icon(Icons.place_outlined, size: 17),
-                    label: const Text('Газрын зурагт харах'),
+                    icon: Icon(Icons.place_outlined, size: 17),
+                    label: Text('Газрын зурагт харах'),
                   ),
                 ],
               ),

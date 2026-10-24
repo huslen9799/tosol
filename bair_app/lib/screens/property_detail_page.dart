@@ -65,16 +65,16 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (c) => AlertDialog(
-        title: const Text('Зарыг устгах уу?'),
-        content: const Text('Энэ зар болон хадгалсан холбоосууд устна.'),
+        title: Text('Зарыг устгах уу?'),
+        content: Text('Энэ зар болон хадгалсан холбоосууд устна.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(c, false),
-            child: const Text('Болих'),
+            child: Text('Болих'),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(c, true),
-            child: const Text('Устгах'),
+            child: Text('Устгах'),
           ),
         ],
       ),
@@ -103,21 +103,21 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
     final p = property;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Байрны дэлгэрэнгүй'),
+        title: Text('Байрны дэлгэрэнгүй'),
         actions: [
           if (p != null) SaveButton(property: p),
           IconButton(
             tooltip: 'Байр харьцуулах',
-            icon: const Icon(Icons.compare_arrows),
+            icon: Icon(Icons.compare_arrows),
             onPressed: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const ComparePage()),
+              MaterialPageRoute(builder: (_) => ComparePage()),
             ),
           ),
         ],
       ),
       body: loading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(child: CircularProgressIndicator())
           : error != null
           ? EmptyState(
               title: 'Зар ачаалж чадсангүй',
@@ -125,14 +125,14 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
               onRetry: load,
             )
           : p == null
-          ? const SizedBox.shrink()
+          ? SizedBox.shrink()
           : RefreshIndicator(
               onRefresh: load,
               child: Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1040),
+                  constraints: BoxConstraints(maxWidth: 1040),
                   child: ListView(
-                    padding: const EdgeInsets.only(bottom: 24),
+                    padding: EdgeInsets.only(bottom: 24),
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.zero,
@@ -143,7 +143,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                           child: Stack(
                             children: [
                               if (p.imageUrls.isEmpty)
-                                const PropertyImageView()
+                                PropertyImageView()
                               else
                                 PageView.builder(
                                   controller: photoController,
@@ -171,7 +171,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                                   bottom: 16,
                                   right: 20,
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(
+                                    padding: EdgeInsets.symmetric(
                                       horizontal: 12,
                                       vertical: 7,
                                     ),
@@ -181,9 +181,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                                     ),
                                     child: Text(
                                       '${photoIndex + 1} / ${p.imageUrls.length}',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                      ),
+                                      style: TextStyle(),
                                     ),
                                   ),
                                 ),
@@ -193,18 +191,18 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                       ),
                       if (p.imageUrls.length > 1)
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(24, 10, 24, 0),
+                          padding: EdgeInsets.fromLTRB(24, 10, 24, 0),
                           child: SizedBox(
                             height: 64,
                             child: ListView.separated(
                               scrollDirection: Axis.horizontal,
                               itemCount: p.imageUrls.length,
                               separatorBuilder: (_, index) =>
-                                  const SizedBox(width: 8),
+                                  SizedBox(width: 8),
                               itemBuilder: (_, i) => GestureDetector(
                                 onTap: () => photoController.animateToPage(
                                   i,
-                                  duration: const Duration(milliseconds: 250),
+                                  duration: Duration(milliseconds: 250),
                                   curve: Curves.easeOut,
                                 ),
                                 child: Container(
@@ -214,7 +212,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                                     borderRadius: BorderRadius.circular(6),
                                     border: Border.all(
                                       color: photoIndex == i
-                                          ? const Color(0xFF285747)
+                                          ? Color(0xFF8394E6)
                                           : Colors.transparent,
                                       width: 2,
                                     ),
@@ -226,7 +224,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                           ),
                         ),
                       Padding(
-                        padding: const EdgeInsets.all(20),
+                        padding: EdgeInsets.all(20),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -235,43 +233,41 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                                 '${p.typeLabel} • ${propertyTypes[p.propertyType]}',
                               ),
                             ),
-                            const SizedBox(height: 10),
+                            SizedBox(height: 10),
                             Text(
                               p.priceLabel,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 30,
                                 fontWeight: FontWeight.w800,
                                 letterSpacing: -.8,
-                                color: Color(0xFF29332D),
                               ),
                             ),
                             if (p.area > 0 && p.listingType == 'sale')
                               Padding(
-                                padding: const EdgeInsets.only(top: 6),
+                                padding: EdgeInsets.only(top: 6),
                                 child: Text(
                                   '${money(p.price / p.area)} / м²',
-                                  style: const TextStyle(
-                                    color: Color(0xFF7D837B),
-                                    fontSize: 12,
-                                  ),
+                                  style: TextStyle(fontSize: 12),
                                 ),
                               ),
-                            const SizedBox(height: 14),
+                            SizedBox(height: 14),
                             Text(
                               p.title,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 23,
                                 fontWeight: FontWeight.w500,
                                 height: 1.3,
                               ),
                             ),
-                            const SizedBox(height: 10),
+                            SizedBox(height: 10),
                             PropertyLocation(property: p),
-                            const SizedBox(height: 16),
+                            SizedBox(height: 16),
                             Card(
-                              color: const Color(0xFFF0EEE7),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHighest,
                               child: Padding(
-                                padding: const EdgeInsets.all(20),
+                                padding: EdgeInsets.all(20),
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceAround,
@@ -296,25 +292,25 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 24),
-                            const Text(
+                            SizedBox(height: 24),
+                            Text(
                               'Байрны тухай',
                               style: TextStyle(
                                 fontSize: 21,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
-                            const SizedBox(height: 12),
+                            SizedBox(height: 12),
                             SelectableText(
                               p.description.isEmpty
                                   ? 'Нэмэлт тайлбар оруулаагүй.'
                                   : p.description,
-                              style: const TextStyle(height: 1.65),
+                              style: TextStyle(height: 1.65),
                             ),
-                            const SizedBox(height: 24),
+                            SizedBox(height: 24),
                             CompareButton(property: p),
                             OutlinedButton.icon(
-                              icon: const Icon(Icons.map_outlined),
+                              icon: Icon(Icons.map_outlined),
                               label: Text(
                                 p.latitude == null || p.longitude == null
                                     ? 'Байршлын цэг оруулаагүй'
@@ -337,18 +333,18 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                                       ),
                                     ),
                             ),
-                            const SizedBox(height: 12),
-                            const Text(
+                            SizedBox(height: 12),
+                            Text(
                               'Зар нийтэлсэн',
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
-                            const SizedBox(height: 12),
+                            SizedBox(height: 12),
                             Card(
                               child: ListTile(
-                                leading: const CircleAvatar(
+                                leading: CircleAvatar(
                                   child: Icon(Icons.person_outline),
                                 ),
                                 title: Text(
@@ -375,12 +371,12 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                                             );
                                           }
                                         },
-                                  icon: const Icon(Icons.copy_outlined),
+                                  icon: Icon(Icons.copy_outlined),
                                 ),
                               ),
                             ),
                             if (p.isOwner || store.isAdmin) ...[
-                              const SizedBox(height: 20),
+                              SizedBox(height: 20),
                               Row(
                                 children: [
                                   Expanded(
@@ -399,15 +395,15 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                                               );
                                               if (mounted) await load();
                                             },
-                                      icon: const Icon(Icons.edit_outlined),
-                                      label: const Text('Засах'),
+                                      icon: Icon(Icons.edit_outlined),
+                                      label: Text('Засах'),
                                     ),
                                   ),
-                                  const SizedBox(width: 12),
+                                  SizedBox(width: 12),
                                   Expanded(
                                     child: OutlinedButton.icon(
                                       onPressed: deleting ? null : remove,
-                                      icon: const Icon(Icons.delete_outline),
+                                      icon: Icon(Icons.delete_outline),
                                       label: Text(
                                         deleting ? 'Устгаж байна' : 'Устгах',
                                       ),
@@ -431,9 +427,9 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
           ? null
           : SafeArea(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+                padding: EdgeInsets.fromLTRB(20, 12, 20, 12),
                 child: FilledButton.icon(
-                  icon: const Icon(Icons.call_outlined),
+                  icon: Icon(Icons.call_outlined),
                   label: Text(
                     p.phone.isEmpty
                         ? 'Утасны мэдээлэл алга'
@@ -480,20 +476,20 @@ class _Fact extends StatelessWidget {
   Widget build(BuildContext context) => Expanded(
     child: Column(
       children: [
-        Icon(icon, color: const Color(0xFF285747), size: 21),
-        const SizedBox(height: 8),
+        Icon(icon, color: Color(0xFF8394E6), size: 21),
+        SizedBox(height: 8),
         FittedBox(
           fit: BoxFit.scaleDown,
           child: Text(
             value,
-            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
           ),
         ),
-        const SizedBox(height: 5),
+        SizedBox(height: 5),
         Text(
           label,
           textAlign: TextAlign.center,
-          style: const TextStyle(color: Color(0xFF7D837B), fontSize: 10),
+          style: TextStyle(fontSize: 10),
         ),
       ],
     ),
@@ -533,7 +529,7 @@ class _PhotoGalleryState extends State<PhotoGallery> {
     backgroundColor: Colors.black,
     appBar: AppBar(
       backgroundColor: Colors.black,
-      foregroundColor: Colors.white,
+      foregroundColor: Theme.of(context).colorScheme.surface,
       title: Text('${index + 1} / ${widget.urls.length}'),
     ),
     body: PageView.builder(
@@ -547,9 +543,9 @@ class _PhotoGalleryState extends State<PhotoGallery> {
           child: Image.network(
             widget.urls[i],
             fit: BoxFit.contain,
-            errorBuilder: (_, error, stack) => const Icon(
+            errorBuilder: (_, error, stack) => Icon(
               Icons.broken_image_outlined,
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.surface,
               size: 60,
             ),
           ),

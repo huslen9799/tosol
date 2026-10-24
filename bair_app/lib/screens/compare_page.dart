@@ -65,9 +65,9 @@ class _ComparePageState extends State<ComparePage> {
         .where((p) => store.comparison.contains(p.id))
         .toList();
     return Scaffold(
-      appBar: AppBar(title: const Text('Байр харьцуулах')),
+      appBar: AppBar(title: Text('Байр харьцуулах')),
       body: loading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(child: CircularProgressIndicator())
           : error != null
           ? EmptyState(
               title: 'Харьцуулалт ачаалж чадсангүй',
@@ -76,12 +76,12 @@ class _ComparePageState extends State<ComparePage> {
             )
           : selected.isEmpty &&
                 unavailable.every((id) => !store.comparison.contains(id))
-          ? const EmptyState(
+          ? EmptyState(
               title: 'Байр сонгоно уу',
               message: 'Зарын харьцуулах товчоор 2–3 байр сонгоорой.',
             )
           : ListView(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(20),
               children: [
                 for (final id in unavailable.where(store.comparison.contains))
                   Card(
@@ -89,21 +89,21 @@ class _ComparePageState extends State<ComparePage> {
                       title: Text('Зар #$id боломжгүй болсон.'),
                       trailing: IconButton(
                         tooltip: 'Харьцуулалтаас хасах',
-                        icon: const Icon(Icons.close),
+                        icon: Icon(Icons.close),
                         onPressed: () => store.toggleComparison(id),
                       ),
                     ),
                   ),
-                const Text(
+                Text(
                   '2–3 байр сонгон үнэ, талбай, байршлыг харьцуулна. Сонголт энэ сессэд хадгалагдана.',
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 if (selected.isNotEmpty)
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: DataTable(
                       columns: [
-                        const DataColumn(label: Text('Үзүүлэлт')),
+                        DataColumn(label: Text('Үзүүлэлт')),
                         ...selected.map(
                           (p) => DataColumn(
                             label: SizedBox(
@@ -139,14 +139,14 @@ class _ComparePageState extends State<ComparePage> {
                           ),
                         DataRow(
                           cells: [
-                            const DataCell(Text('Үйлдэл')),
+                            DataCell(Text('Үйлдэл')),
                             ...selected.map(
                               (p) => DataCell(
                                 Row(
                                   children: [
                                     IconButton(
                                       tooltip: 'Зар үзэх',
-                                      icon: const Icon(Icons.open_in_new),
+                                      icon: Icon(Icons.open_in_new),
                                       onPressed: () => Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -157,7 +157,7 @@ class _ComparePageState extends State<ComparePage> {
                                     ),
                                     IconButton(
                                       tooltip: 'Харьцуулалтаас хасах',
-                                      icon: const Icon(Icons.close),
+                                      icon: Icon(Icons.close),
                                       onPressed: () =>
                                           store.toggleComparison(p.id),
                                     ),

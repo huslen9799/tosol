@@ -1,4 +1,4 @@
-﻿import secrets
+import secrets
 from datetime import timedelta
 from importlib import import_module
 from django.utils import timezone
@@ -79,7 +79,7 @@ def register(request):
         User._meta.get_field("username").clean(username, None)
     except ValidationError:
         return Response({"message": "Хэрэглэгчийн нэр 150 хүртэл тэмдэгттэй, зөвшөөрөгдсөн тэмдэгтээр байна."}, status=400)
-    if User.objects.filter(username__iexact=username).exists():
+    if User.objects.filter(username__exact=username).exists():
         return Response({"message": "Энэ хэрэглэгчийн нэр бүртгэлтэй байна."}, status=400)
 
     try:
@@ -237,7 +237,7 @@ def verify(request):
     first_name = request.session.get("register_first_name", "")
     last_name = request.session.get("register_last_name", "")
     username = request.session.get("register_username", email)
-    if User.objects.filter(username__iexact=username).exists():
+    if User.objects.filter(username__exact=username).exists():
         return Response({"message": "Энэ хэрэглэгчийн нэр бүртгэлтэй байна. Дахин бүртгүүлнэ үү."}, status=400)
 
     if register_email != email or not register_password:
@@ -302,26 +302,26 @@ def verify(request):
 
 @api_view(["POST"])
 def login_view(request):
-    email = str(request.data.get("identifier") or request.data.get("username") or request.data.get("email", "")).strip()
+    identifier = str(request.data.get("identifier") or request.data.get("username") or request.data.get("email", "")).strip()
     password = request.data.get("password")
 
-    if not email or not password:
+    if not identifier or not password:
         return Response(
             {
                 "success": False,
-                "message": "И-мэйл болон нууц үгээ оруулна уу."
+                "message": "Хэрэглэгчийн нэр эсвэл и-мэйл, нууц үгээ оруулна уу."
             },
             status=status.HTTP_400_BAD_REQUEST
         )
 
     try:
-        db_user = User.objects.get(Q(email__iexact=email) | Q(username__iexact=email))
+        db_user = User.objects.get(Q(email__iexact=identifier) | Q(username__exact=identifier))
 
     except (User.DoesNotExist, User.MultipleObjectsReturned):
         return Response(
             {
                 "success": False,
-                "message": "И-мэйл эсвэл нууц үг буруу байна."
+                "message": "Хэрэглэгчийн нэр, и-мэйл эсвэл нууц үг буруу байна."
             },
             status=status.HTTP_401_UNAUTHORIZED
         )
@@ -335,7 +335,7 @@ def login_view(request):
         return Response(
             {
                 "success": False,
-                "message": "И-мэйл эсвэл нууц үг буруу байна."
+                "message": "Хэрэглэгчийн нэр, и-мэйл эсвэл нууц үг буруу байна."
             },
             status=status.HTTP_401_UNAUTHORIZED
         )

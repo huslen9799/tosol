@@ -45,11 +45,11 @@ class AppStore extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> login(String email, String password) async {
+  Future<void> login(String identifier, String password) async {
     final data = await api.request(
       'POST',
       'login/',
-      body: {'identifier': email.trim(), 'password': password},
+      body: {'identifier': identifier.trim(), 'password': password},
     ) as Map<String, dynamic>;
     api.client.token = data['token'] as String;
     user = data['user'] as Map<String, dynamic>;

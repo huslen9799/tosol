@@ -59,7 +59,7 @@ class _PasswordPageState extends State<PasswordPage> {
         cooldown = 60;
       });
       timer?.cancel();
-      timer = Timer.periodic(const Duration(seconds: 1), (t) {
+      timer = Timer.periodic(Duration(seconds: 1), (t) {
         if (!mounted) {
           t.cancel();
           return;
@@ -120,7 +120,7 @@ class _PasswordPageState extends State<PasswordPage> {
     String label,
     String? Function(String?) validator,
   ) => Padding(
-    padding: const EdgeInsets.only(bottom: 16),
+    padding: EdgeInsets.only(bottom: 16),
     child: TextFormField(
       controller: controller,
       enabled: !busy,
@@ -136,22 +136,22 @@ class _PasswordPageState extends State<PasswordPage> {
       title: Text(widget.forgot ? 'Нууц үг сэргээх' : 'Нууц үг солих'),
     ),
     body: SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(24),
       child: Form(
         key: form,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             if (widget.forgot) ...[
-              const Text(
+              Text(
                 'Бүртгэлтэй и-мэйлдээ код авч шинэ нууц үг тохируулна. Код 10 минут хүчинтэй.',
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               TextFormField(
                 controller: email,
                 enabled: !busy && resetToken == null,
                 keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(labelText: 'И-мэйл'),
+                decoration: InputDecoration(labelText: 'И-мэйл'),
                 validator: (v) =>
                     v == null ||
                         !RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$')
@@ -159,7 +159,7 @@ class _PasswordPageState extends State<PasswordPage> {
                     ? 'И-мэйл хаягаа зөв оруулна уу.'
                     : null,
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               OutlinedButton(
                 onPressed: busy || cooldown > 0 ? null : sendCode,
                 child: Text(
@@ -183,21 +183,21 @@ class _PasswordPageState extends State<PasswordPage> {
                             code.clear();
                           });
                         },
-                  child: const Text('Өөр и-мэйл ашиглах'),
+                  child: Text('Өөр и-мэйл ашиглах'),
                 ),
                 Text('Код илгээх хаяг: $sentEmail'),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 TextFormField(
                   controller: code,
                   enabled: !busy,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(labelText: '6 оронтой код'),
+                  decoration: InputDecoration(labelText: '6 оронтой код'),
                   validator: (v) =>
                       v == null || !RegExp(r'^\d{6}$').hasMatch(v.trim())
                       ? '6 оронтой код оруулна уу.'
                       : null,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
               ],
             ] else
               passwordField(

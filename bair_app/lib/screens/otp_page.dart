@@ -26,7 +26,7 @@ class _OtpPageState extends State<OtpPage> {
 
   void startTimer() {
     timer?.cancel();
-    timer = Timer.periodic(const Duration(seconds: 1), (_) {
+    timer = Timer.periodic(Duration(seconds: 1), (_) {
       if (!mounted) return;
       if (cooldown > 0) {
         setState(() => cooldown--);
@@ -91,58 +91,56 @@ class _OtpPageState extends State<OtpPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('И-мэйл баталгаажуулах')),
+    appBar: AppBar(title: Text('И-мэйл баталгаажуулах')),
     body: SafeArea(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(height: 50),
-            const Icon(
+            SizedBox(height: 50),
+            Icon(
               Icons.mark_email_read_outlined,
               size: 80,
-              color: Color(0xFF285747),
+              color: Color(0xFF8394E6),
             ),
-            const SizedBox(height: 24),
-            const Text(
+            SizedBox(height: 24),
+            Text(
               'Таны код ирсэн үү?',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 27, fontWeight: FontWeight.w700),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             Text(widget.email, textAlign: TextAlign.center),
-            const SizedBox(height: 8),
-            const Text(
+            SizedBox(height: 8),
+            Text(
               'И-мэйлээр ирсэн 6 оронтой кодыг оруулна уу. Код 10 минут хүчинтэй.',
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 30),
+            SizedBox(height: 30),
             TextField(
               controller: otpController,
               keyboardType: TextInputType.number,
-              autofillHints: const [AutofillHints.oneTimeCode],
+              autofillHints: [AutofillHints.oneTimeCode],
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               maxLength: 6,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 28, letterSpacing: 10),
-              decoration: const InputDecoration(
-                labelText: 'Баталгаажуулах код',
-              ),
+              style: TextStyle(fontSize: 28, letterSpacing: 10),
+              decoration: InputDecoration(labelText: 'Баталгаажуулах код'),
               onSubmitted: (_) {
                 if (!loading) verifyOtp();
               },
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24),
             FilledButton(
               onPressed: loading || resendLoading ? null : verifyOtp,
               child: loading
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 22,
                       height: 22,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text('Баталгаажуулах'),
+                  : Text('Баталгаажуулах'),
             ),
             TextButton(
               onPressed: resendLoading || loading || cooldown > 0

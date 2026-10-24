@@ -64,53 +64,49 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Бүртгүүлэх')),
+    appBar: AppBar(title: Text('Бүртгүүлэх')),
     body: SafeArea(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(24),
         child: Form(
           key: form,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Icon(
-                Icons.person_add_alt_1,
-                size: 64,
-                color: Color(0xFF285747),
-              ),
-              const SizedBox(height: 20),
-              const Text(
+              Icon(Icons.person_add_alt_1, size: 64, color: Color(0xFF8394E6)),
+              SizedBox(height: 20),
+              Text(
                 'Өргөөнд тавтай морил',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.w700),
               ),
-              const SizedBox(height: 8),
-              const Text(
+              SizedBox(height: 8),
+              Text(
                 'И-мэйл хаягаа кодоор баталгаажуулж бүртгүүлээрэй.',
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 28),
+              SizedBox(height: 28),
               TextFormField(
                 controller: lastNameController,
                 validator: requiredField,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Овог',
                   prefixIcon: Icon(Icons.badge_outlined),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               TextFormField(
                 controller: firstNameController,
                 validator: requiredField,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Нэр',
                   prefixIcon: Icon(Icons.person_outline),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               TextFormField(
                 controller: usernameController,
-                autofillHints: const [AutofillHints.newUsername],
+                autofillHints: [AutofillHints.newUsername],
                 validator: (v) =>
                     v == null ||
                         v.trim().isEmpty ||
@@ -118,12 +114,12 @@ class _RegisterPageState extends State<RegisterPage> {
                         v.trim().length > 150
                     ? 'Хэрэглэгчийн нэр оруулна уу. @ тэмдэг ашиглахгүй.'
                     : null,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Хэрэглэгчийн нэр',
                   prefixIcon: Icon(Icons.account_circle_outlined),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               TextFormField(
                 controller: emailController,
                 keyboardType: TextInputType.emailAddress,
@@ -133,24 +129,24 @@ class _RegisterPageState extends State<RegisterPage> {
                             .hasMatch(v.trim())
                     ? 'И-мэйл хаягаа зөв оруулна уу.'
                     : null,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'И-мэйл',
                   prefixIcon: Icon(Icons.email_outlined),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               TextFormField(
                 controller: passwordController,
                 obscureText: true,
                 validator: (v) => v == null || v.length < 6
                     ? 'Нууц үг хамгийн багадаа 6 тэмдэгт байна.'
                     : null,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Нууц үг',
                   prefixIcon: Icon(Icons.lock_outline),
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24),
               TextFormField(
                 controller: confirmationController,
                 obscureText: true,
@@ -158,21 +154,21 @@ class _RegisterPageState extends State<RegisterPage> {
                     v == null || v.isEmpty || v != passwordController.text
                     ? 'Нууц үг таарахгүй байна.'
                     : null,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Нууц үг давтах',
                   prefixIcon: Icon(Icons.lock_outline),
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24),
               FilledButton(
                 onPressed: loading ? null : register,
                 child: loading
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 22,
                         height: 22,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('Бүртгүүлэх.'),
+                    : Text('Бүртгүүлэх.'),
               ),
             ],
           ),

@@ -293,7 +293,7 @@ class _PropertyFormPageState extends State<PropertyFormPage> {
     enabled: !saving,
     maxLines: lines,
     keyboardType: numeric
-        ? const TextInputType.numberWithOptions(decimal: true)
+        ? TextInputType.numberWithOptions(decimal: true)
         : key == 'contact_phone'
         ? TextInputType.phone
         : lines > 1
@@ -316,11 +316,11 @@ class _PropertyFormPageState extends State<PropertyFormPage> {
             tooltip: 'Зураг хасах',
             style: IconButton.styleFrom(
               backgroundColor: Colors.black54,
-              minimumSize: const Size(28, 28),
-              padding: const EdgeInsets.all(4),
+              minimumSize: Size(28, 28),
+              padding: EdgeInsets.all(4),
             ),
             onPressed: saving ? null : remove,
-            icon: const Icon(Icons.close, size: 16),
+            icon: Icon(Icons.close, size: 16),
           ),
         ),
       ],
@@ -335,21 +335,21 @@ class _PropertyFormPageState extends State<PropertyFormPage> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(20),
           child: Form(
             key: form,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text(
+                Text(
                   'Орон зайгаа танилцуулаарай',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
                 ),
-                const SizedBox(height: 8),
-                const Text('Байрны бодит мэдээлэл, тод зургууд оруулаарай.'),
-                const SizedBox(height: 24),
+                SizedBox(height: 8),
+                Text('Байрны бодит мэдээлэл, тод зургууд оруулаарай.'),
+                SizedBox(height: 24),
                 SegmentedButton<String>(
-                  segments: const [
+                  segments: [
                     ButtonSegment(
                       value: 'sale',
                       label: Text('Худалдах'),
@@ -366,14 +366,12 @@ class _PropertyFormPageState extends State<PropertyFormPage> {
                       ? null
                       : (s) => setState(() => listingType = s.first),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
                 field('title', 'Зарын гарчиг'),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 DropdownButtonFormField<String>(
                   initialValue: propertyType,
-                  decoration: const InputDecoration(
-                    labelText: 'Үл хөдлөхийн төрөл',
-                  ),
+                  decoration: InputDecoration(labelText: 'Үл хөдлөхийн төрөл'),
                   items: propertyTypes.entries
                       .map(
                         (e) => DropdownMenuItem(
@@ -386,11 +384,11 @@ class _PropertyFormPageState extends State<PropertyFormPage> {
                       ? null
                       : (v) => setState(() => propertyType = v!),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 DropdownButtonFormField<String>(
                   initialValue: district,
                   isExpanded: true,
-                  decoration: const InputDecoration(labelText: 'Дүүрэг'),
+                  decoration: InputDecoration(labelText: 'Дүүрэг'),
                   items: districtChoices
                       .map((d) => DropdownMenuItem(value: d, child: Text(d)))
                       .toList(),
@@ -405,8 +403,8 @@ class _PropertyFormPageState extends State<PropertyFormPage> {
                           loadComplexes();
                         },
                 ),
-                const SizedBox(height: 16),
-                if (loadingComplexes) const LinearProgressIndicator(),
+                SizedBox(height: 16),
+                if (loadingComplexes) LinearProgressIndicator(),
                 if (complexError != null)
                   TextButton(
                     onPressed: loadComplexes,
@@ -425,7 +423,7 @@ class _PropertyFormPageState extends State<PropertyFormPage> {
                         '${complexes.length} хотхон • Сонгосон дүүргээр шүүнэ',
                   ),
                   items: [
-                    const DropdownMenuItem<int>(
+                    DropdownMenuItem<int>(
                       value: 0,
                       child: Text('Хотхон сонгохгүй'),
                     ),
@@ -450,14 +448,14 @@ class _PropertyFormPageState extends State<PropertyFormPage> {
                       ? null
                       : (v) => setState(() => complexId = v == 0 ? null : v),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 field('location', 'Хотхон, хаяг'),
-                const SizedBox(height: 8),
-                const Text(
+                SizedBox(height: 8),
+                Text(
                   'Хотхон, гудамж, байрны дугаарыг бичнэ үү. Газрын зургийн цэгийг тусад нь сонгоно.',
                 ),
                 OutlinedButton.icon(
-                  icon: const Icon(Icons.location_on_outlined),
+                  icon: Icon(Icons.location_on_outlined),
                   label: Text(
                     mapPoint == null
                         ? 'Газрын зураг дээр цэг сонгох'
@@ -490,11 +488,11 @@ class _PropertyFormPageState extends State<PropertyFormPage> {
                         onPressed: saving
                             ? null
                             : () => setState(() => mapPoint = null),
-                        child: const Text('Цэг арилгах'),
+                        child: Text('Цэг арилгах'),
                       ),
                     ],
                   ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 field(
                   'price',
                   listingType == 'rent'
@@ -502,21 +500,21 @@ class _PropertyFormPageState extends State<PropertyFormPage> {
                       : 'Худалдах үнэ • ₮',
                   numeric: true,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Row(
                   children: [
                     Expanded(
                       child: field('area', 'Талбай • м²', numeric: true),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: 12),
                     Expanded(child: field('rooms', 'Өрөө', numeric: true)),
                   ],
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Row(
                   children: [
                     Expanded(child: field('floor', 'Давхар', numeric: true)),
-                    const SizedBox(width: 12),
+                    SizedBox(width: 12),
                     Expanded(
                       child: field(
                         'total_floors',
@@ -526,17 +524,17 @@ class _PropertyFormPageState extends State<PropertyFormPage> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 field('contact_phone', 'Холбогдох утас'),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 field('description', 'Дэлгэрэнгүй тайлбар', lines: 5),
-                const SizedBox(height: 24),
+                SizedBox(height: 24),
                 Row(
                   children: [
                     Expanded(
                       child: Text(
                         'Байрны зураг • $photoCount/12',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 19,
                           fontWeight: FontWeight.w700,
                         ),
@@ -546,28 +544,28 @@ class _PropertyFormPageState extends State<PropertyFormPage> {
                       onPressed: saving || picking || photoCount >= 12
                           ? null
                           : pickPhotos,
-                      icon: const Icon(Icons.add_photo_alternate_outlined),
+                      icon: Icon(Icons.add_photo_alternate_outlined),
                       label: Text(picking ? 'Нээж байна...' : 'Зураг нэмэх'),
                     ),
                   ],
                 ),
-                const Text(
+                Text(
                   'Хамгийн ихдээ 12 зураг, зураг бүр 10 MB хүртэл.',
-                  style: TextStyle(color: Colors.grey, fontSize: 12),
+                  style: TextStyle(fontSize: 12),
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 if (photoCount == 0)
                   Container(
                     height: 120,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFEDF4EE),
+                      color: Color(0xFFEDFBF8),
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: const Center(
+                    child: Center(
                       child: Icon(
                         Icons.add_photo_alternate_outlined,
                         size: 40,
-                        color: Color(0xFF93A49C),
+                        color: Color(0xFF8796AD),
                       ),
                     ),
                   )
@@ -601,19 +599,19 @@ class _PropertyFormPageState extends State<PropertyFormPage> {
                       ),
                     ],
                   ),
-                const SizedBox(height: 30),
+                SizedBox(height: 30),
                 FilledButton.icon(
                   onPressed: saving || picking ? null : save,
                   icon: saving
-                      ? const SizedBox(
+                      ? SizedBox(
                           width: 20,
                           height: 20,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Icon(Icons.check),
+                      : Icon(Icons.check),
                   label: Text(saving ? 'Хадгалж байна...' : 'Зараа хадгалах'),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
               ],
             ),
           ),

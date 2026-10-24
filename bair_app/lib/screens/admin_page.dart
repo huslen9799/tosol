@@ -88,11 +88,11 @@ class _AdminPageState extends State<AdminPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(c, false),
-            child: const Text('Болих'),
+            child: Text('Болих'),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(c, true),
-            child: const Text('Устгах'),
+            child: Text('Устгах'),
           ),
         ],
       ),
@@ -116,43 +116,41 @@ class _AdminPageState extends State<AdminPage> {
   Widget build(BuildContext context) {
     if (!AppScope.of(context).isAdmin) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Админ удирдлага')),
-        body: const Center(child: Text('Админ эрх шаардлагатай.')),
+        appBar: AppBar(title: Text('Админ удирдлага')),
+        body: Center(child: Text('Админ эрх шаардлагатай.')),
       );
     }
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Админ удирдлага'),
+        title: Text('Админ удирдлага'),
         actions: [
           IconButton(
             onPressed: loading ? null : load,
-            icon: const Icon(Icons.refresh),
+            icon: Icon(Icons.refresh),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: loading ? null : () => edit(),
-        icon: const Icon(Icons.add),
+        icon: Icon(Icons.add),
         label: Text(kind == 'complexes' ? 'Хотхон нэмэх' : 'Дүүрэг нэмэх'),
       ),
       body: Column(
         children: [
           ListTile(
-            leading: const Icon(Icons.home_work),
-            title: const Text('Бүх зар удирдах'),
-            subtitle: const Text('Бүх хэрэглэгчийн зарыг засах, устгах'),
-            trailing: const Icon(Icons.chevron_right),
+            leading: Icon(Icons.home_work),
+            title: Text('Бүх зар удирдах'),
+            subtitle: Text('Бүх хэрэглэгчийн зарыг засах, устгах'),
+            trailing: Icon(Icons.chevron_right),
             onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (_) => const PropertyPage(standalone: true),
-              ),
+              MaterialPageRoute(builder: (_) => PropertyPage(standalone: true)),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16),
             child: SegmentedButton<String>(
-              segments: const [
+              segments: [
                 ButtonSegment(value: 'complexes', label: Text('Хотхонууд')),
                 ButtonSegment(value: 'districts', label: Text('Дүүргүүд')),
               ],
@@ -165,7 +163,7 @@ class _AdminPageState extends State<AdminPage> {
           ),
           Expanded(
             child: loading
-                ? const Center(child: CircularProgressIndicator())
+                ? Center(child: CircularProgressIndicator())
                 : error != null
                 ? EmptyState(
                     title: 'Ачаалж чадсангүй',
@@ -173,11 +171,11 @@ class _AdminPageState extends State<AdminPage> {
                     onRetry: load,
                   )
                 : entries.isEmpty
-                ? const Center(child: Text('Сонголт нэмээрэй.'))
+                ? Center(child: Text('Сонголт нэмээрэй.'))
                 : RefreshIndicator(
                     onRefresh: load,
                     child: ListView.builder(
-                      padding: const EdgeInsets.only(bottom: 100),
+                      padding: EdgeInsets.only(bottom: 100),
                       itemCount: entries.length,
                       itemBuilder: (context, index) {
                         final entry = entries[index];
@@ -195,12 +193,12 @@ class _AdminPageState extends State<AdminPage> {
                               IconButton(
                                 tooltip: 'Засах',
                                 onPressed: () => edit(entry),
-                                icon: const Icon(Icons.edit_outlined),
+                                icon: Icon(Icons.edit_outlined),
                               ),
                               IconButton(
                                 tooltip: 'Устгах',
                                 onPressed: () => remove(entry),
-                                icon: const Icon(Icons.delete_outline),
+                                icon: Icon(Icons.delete_outline),
                               ),
                             ],
                           ),
@@ -305,7 +303,7 @@ class _ChoiceEditPageState extends State<ChoiceEditPage> {
       ),
     ),
     body: SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(24),
       child: Form(
         key: form,
         child: Column(
@@ -315,13 +313,13 @@ class _ChoiceEditPageState extends State<ChoiceEditPage> {
               controller: name,
               enabled: !saving,
               maxLength: isComplex ? 160 : 80,
-              decoration: const InputDecoration(labelText: 'Нэр'),
+              decoration: InputDecoration(labelText: 'Нэр'),
               validator: (v) =>
                   v == null || v.trim().isEmpty ? 'Нэр оруулна уу.' : null,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             if (isComplex) ...[
-              if (loading) const LinearProgressIndicator(),
+              if (loading) LinearProgressIndicator(),
               if (error != null)
                 TextButton(
                   onPressed: loadDistricts,
@@ -333,7 +331,7 @@ class _ChoiceEditPageState extends State<ChoiceEditPage> {
                     ? districtId
                     : null,
                 isExpanded: true,
-                decoration: const InputDecoration(labelText: 'Дүүрэг'),
+                decoration: InputDecoration(labelText: 'Дүүрэг'),
                 items: districts
                     .map(
                       (d) => DropdownMenuItem(
@@ -347,22 +345,22 @@ class _ChoiceEditPageState extends State<ChoiceEditPage> {
                     : (v) => setState(() => districtId = v),
                 validator: (v) => v == null ? 'Дүүрэг сонгоно уу.' : null,
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               TextFormField(
                 controller: address,
                 enabled: !saving,
                 maxLength: 255,
-                decoration: const InputDecoration(labelText: 'Хаяг'),
+                decoration: InputDecoration(labelText: 'Хаяг'),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
             ],
             TextFormField(
               controller: description,
               enabled: !saving,
               maxLines: 4,
-              decoration: const InputDecoration(labelText: 'Тайлбар'),
+              decoration: InputDecoration(labelText: 'Тайлбар'),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24),
             FilledButton(
               onPressed: saving || loading || error != null ? null : save,
               child: Text(saving ? 'Хадгалж байна...' : 'Хадгалах'),
