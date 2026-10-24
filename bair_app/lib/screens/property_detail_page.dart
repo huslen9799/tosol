@@ -482,16 +482,26 @@ class _Fact extends StatelessWidget {
   final String value, label;
   const _Fact({required this.icon, required this.value, required this.label});
   @override
-  Widget build(BuildContext context) => Column(
-    children: [
-      Icon(icon, color: const Color(0xFF285747)),
-      const SizedBox(height: 8),
-      Text(
-        value,
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-      ),
-      Text(label, style: const TextStyle(color: Colors.grey, fontSize: 12)),
-    ],
+  Widget build(BuildContext context) => Expanded(
+    child: Column(
+      children: [
+        Icon(icon, color: const Color(0xFF285747), size: 21),
+        const SizedBox(height: 8),
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            value,
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
+          ),
+        ),
+        const SizedBox(height: 5),
+        Text(
+          label,
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: Color(0xFF7D837B), fontSize: 10),
+        ),
+      ],
+    ),
   );
 }
 

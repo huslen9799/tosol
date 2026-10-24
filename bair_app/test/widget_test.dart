@@ -401,6 +401,7 @@ void main() {
       expect(find.text('Дараагийн гэрээ эндээс.'), findsOneWidget);
       expect(find.text('Үр дүн харах'), findsOneWidget);
       await tester.enterText(find.byType(TextField).at(1), '100000000');
+      await tester.ensureVisible(find.text('Үр дүн харах'));
       await tester.tap(find.text('Үр дүн харах'));
       await tester.pumpAndSettle();
       expect(requests.last.url.queryParameters['min_price'], '100000000');

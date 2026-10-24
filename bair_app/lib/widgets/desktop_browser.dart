@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 import '../models/property.dart';
 import 'brand.dart';
@@ -58,7 +59,7 @@ class _DesktopBrowserState extends State<DesktopBrowser> {
   @override
   void didUpdateWidget(DesktopBrowser oldWidget) {
     super.didUpdateWidget(oldWidget);
-    sync();
+    if (!mapEquals(oldWidget.query, widget.query)) sync();
   }
 
   @override

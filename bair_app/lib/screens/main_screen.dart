@@ -65,8 +65,9 @@ class _MainScreenState extends State<MainScreen> {
                   const Spacer(),
                   FilledButton.icon(
                     onPressed: () async {
-                      if (!await requireLogin(context) || !context.mounted)
+                      if (!await requireLogin(context) || !context.mounted) {
                         return;
+                      }
                       Navigator.push(
                         context,
                         MaterialPageRoute(
