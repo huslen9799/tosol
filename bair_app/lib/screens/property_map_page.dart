@@ -13,11 +13,13 @@ import '../widgets/property_card.dart';
 class PropertyMapPage extends StatefulWidget {
   final Map<String, String> query;
   final bool recommendations;
+  final Property? initialProperty;
   final Widget Function(String url)? tileBuilder;
   const PropertyMapPage({
     super.key,
     required this.query,
     this.recommendations = false,
+    this.initialProperty,
     this.tileBuilder,
   });
   @override
@@ -36,6 +38,14 @@ class _PropertyMapPageState extends State<PropertyMapPage> {
   void initState() {
     super.initState();
     searchController.text = query['search'] ?? '';
+    final initial = widget.initialProperty;
+    if (initial != null &&
+        initial.latitude != null &&
+        initial.longitude != null) {
+      selected = initial;
+      items = [initial];
+      count = 1;
+    }
   }
 
   @override

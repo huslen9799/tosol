@@ -106,7 +106,28 @@ class _FilterSheetState extends State<FilterSheet> {
               ],
             ),
             const SizedBox(height: 20),
-            select('district', 'Дүүрэг', {for (final d in districts) d: d}),
+            const Text('Дүүрэг', style: TextStyle(fontWeight: FontWeight.w600)),
+            const SizedBox(height: 6),
+            const Text(
+              'Хэд хэдэн дүүрэг сонгож болно.',
+              style: TextStyle(fontSize: 12, color: Colors.grey),
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final district in ['', ...districts])
+                  FilterChip(
+                    label: Text(district.isEmpty ? 'Бүх дүүрэг' : district),
+                    selected: district.isEmpty
+                        ? selectedDistricts(query).isEmpty
+                        : selectedDistricts(query).contains(district),
+                    onSelected: (_) =>
+                        setState(() => toggleDistrict(query, district)),
+                  ),
+              ],
+            ),
             const SizedBox(height: 16),
             select('property_type', 'Үл хөдлөхийн төрөл', propertyTypes),
             const SizedBox(height: 16),

@@ -1,4 +1,5 @@
 import 'package:bair_app/widgets/location_map.dart';
+import 'package:bair_app/models/property.dart';
 import 'package:bair_app/screens/property_map_page.dart';
 import 'package:bair_app/services/app_store.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,45 @@ import 'package:http/http.dart' as http;
 import 'widget_test.dart' as fixtures;
 
 void main() {
+  testWidgets('internal listing map starts at the property coordinates', (
+    tester,
+  ) async {
+    await fixtures.mobileSize(tester);
+    final requests = <http.Request>[];
+    final property = Property.fromJson({
+      ...fixtures.sample,
+      'latitude': 47.785,
+      'longitude': 108.365,
+    });
+    final store = fixtures.testStore(requests);
+    await tester.pumpWidget(
+      AppScope(
+        store: store,
+        child: MaterialApp(
+          home: PropertyMapPage(
+            query: const {},
+            initialProperty: property,
+            tileBuilder: (_) => const ColoredBox(color: Colors.grey),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final map = tester.widget<LocationMap>(find.byType(LocationMap));
+    expect(map.initialCenter.latitude, 47.785);
+    expect(map.initialCenter.longitude, 108.365);
+    final bbox = requests.last.url.queryParameters['bbox']!
+        .split(',')
+        .map(double.parse)
+        .toList();
+    expect(bbox[0], lessThan(108.365));
+    expect(bbox[2], greaterThan(108.365));
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox());
+    store.dispose();
+    store.api.client.close();
+  });
+
   testWidgets('map search preserves filters and opens the selected listing', (
     tester,
   ) async {

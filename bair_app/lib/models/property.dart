@@ -109,3 +109,26 @@ class PropertyResults {
   final bool hasNext;
   const PropertyResults(this.items, this.count, this.hasNext);
 }
+
+/// District filters use a comma-separated value shared by list and map searches.
+Set<String> selectedDistricts(Map<String, String> query) =>
+    (query['district'] ?? '')
+        .split(',')
+        .map((d) => d.trim())
+        .where((d) => d.isNotEmpty)
+        .toSet();
+
+void toggleDistrict(Map<String, String> query, String district) {
+  final selected = selectedDistricts(query);
+  if (district.isEmpty) {
+    selected.clear();
+  } else if (!selected.add(district)) {
+    selected.remove(district);
+  }
+  if (selected.isEmpty) {
+    query.remove('district');
+  } else {
+    query['district'] = selected.join(',');
+  }
+  query.remove('complex');
+}

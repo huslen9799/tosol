@@ -7,6 +7,7 @@ import '../services/app_store.dart';
 import '../widgets/property_card.dart';
 import '../widgets/property_location.dart';
 import 'property_form_page.dart';
+import 'property_map_page.dart';
 import 'compare_page.dart';
 
 class PropertyDetailPage extends StatefulWidget {
@@ -314,33 +315,27 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                             CompareButton(property: p),
                             OutlinedButton.icon(
                               icon: const Icon(Icons.map_outlined),
-                              label: const Text('Газрын зурагт хайх'),
-                              onPressed: () async {
-                                try {
-                                  final url = Uri.https(
-                                    'www.google.com',
-                                    '/maps/search/',
-                                    {
-                                      'api': '1',
-                                      'query':
-                                          p.latitude != null &&
-                                              p.longitude != null
-                                          ? '${p.latitude},${p.longitude}'
-                                          : '${p.district} ${p.location}, Улаанбаатар',
-                                    },
-                                  );
-                                  if (!await launchUrl(
-                                    url,
-                                    mode: LaunchMode.externalApplication,
-                                  )) {
-                                    throw Exception(
-                                      'Газрын зураг нээж чадсангүй.',
-                                    );
-                                  }
-                                } catch (e) {
-                                  if (context.mounted) showMessage(context, e);
-                                }
-                              },
+                              label: Text(
+                                p.latitude == null || p.longitude == null
+                                    ? 'Байршлын цэг оруулаагүй'
+                                    : 'Газрын зурагт харах',
+                              ),
+                              onPressed:
+                                  p.latitude == null || p.longitude == null
+                                  ? null
+                                  : () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => PropertyMapPage(
+                                          initialProperty: p,
+                                          query: {
+                                            'listing_type': p.listingType,
+                                            if (p.district.isNotEmpty)
+                                              'district': p.district,
+                                          },
+                                        ),
+                                      ),
+                                    ),
                             ),
                             const SizedBox(height: 12),
                             const Text(

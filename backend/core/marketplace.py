@@ -90,9 +90,17 @@ class PropertyViewSet(viewsets.ModelViewSet):
                 except ValueError:
                     raise serializers.ValidationError({key: "Зөв ID оруулна уу."})
                 qs = qs.filter(**{field: value})
-        for field in ["listing_type", "property_type", "district"]:
+        for field in ["listing_type", "property_type"]:
             if params.get(field):
                 qs = qs.filter(**{field: params[field]})
+        selected_districts = {
+            district.strip()
+            for value in params.getlist("district")
+            for district in value.split(",")
+            if district.strip()
+        }
+        if selected_districts:
+            qs = qs.filter(district__in=selected_districts)
         if params.get("search"):
             query = params["search"]
             qs = qs.filter(Q(title__icontains=query) | Q(location__icontains=query) | Q(district__icontains=query) | Q(description__icontains=query))

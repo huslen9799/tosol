@@ -250,20 +250,17 @@ class _PropertyPageState extends State<PropertyPage> {
               separatorBuilder: (_, index) => const SizedBox(width: 8),
               itemBuilder: (_, index) {
                 final district = index == 0 ? '' : districts[index - 1];
-                return ChoiceChip(
+                return FilterChip(
                   label: Text(index == 0 ? 'Бүх дүүрэг' : district),
-                  selected: (query['district'] ?? '') == district,
+                  selected: district.isEmpty
+                      ? selectedDistricts(query).isEmpty
+                      : selectedDistricts(query).contains(district),
                   showCheckmark: false,
                   onSelected: (_) {
                     debounce?.cancel();
                     setState(() {
                       query['search'] = search.text.trim();
-                      if (district.isEmpty) {
-                        query.remove('district');
-                      } else {
-                        query['district'] = district;
-                        query.remove('complex');
-                      }
+                      toggleDistrict(query, district);
                     });
                     load();
                   },
@@ -365,7 +362,17 @@ class _PropertyPageState extends State<PropertyPage> {
                               runSpacing: 4,
                               children: [
                                 if (query['district']?.isNotEmpty == true)
-                                  Chip(label: Text(query['district']!)),
+                                  ...selectedDistricts(query).map(
+                                    (district) => InputChip(
+                                      label: Text(district),
+                                      onDeleted: () {
+                                        setState(
+                                          () => toggleDistrict(query, district),
+                                        );
+                                        load();
+                                      },
+                                    ),
+                                  ),
                                 if (query['property_type']?.isNotEmpty == true)
                                   Chip(
                                     label: Text(

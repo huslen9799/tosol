@@ -230,17 +230,17 @@ class _DesktopBrowserState extends State<DesktopBrowser> {
                       for (final d in ['', ...districts])
                         InkWell(
                           onTap: () => setState(() {
-                            draft['district'] = d;
-                            draft.remove('complex');
+                            toggleDistrict(draft, d);
                           }),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 6),
                             child: Row(
                               children: [
                                 Icon(
-                                  draft['district'] == d ||
-                                          (d.isEmpty &&
-                                              draft['district'] == null)
+                                  (d.isEmpty
+                                          ? selectedDistricts(draft).isEmpty
+                                          : selectedDistricts(draft)
+                                                .contains(d))
                                       ? Icons.check_box
                                       : Icons.check_box_outline_blank,
                                   size: 15,
