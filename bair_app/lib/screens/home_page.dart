@@ -116,7 +116,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       if (wide)
                         const Text(
-                          'Таны дараагийн түүх эндээс эхэлнэ',
+                          'Үл хөдлөх хөрөнгийн зар',
                           style: TextStyle(color: AppColors.secondaryText),
                         ),
                       const SizedBox(width: 16),
@@ -185,10 +185,7 @@ class _HomePageState extends State<HomePage> {
                         .toList(),
                   ),
                   const SizedBox(height: 32),
-                  _heading(
-                    'Өөрийн хэмнэлд тохирох байршил',
-                    'Хаана амьдрахыг хүсэж байна вэ?',
-                  ),
+                  _heading('Дүүргээр хайх', 'Байршлаа сонгох'),
                   const SizedBox(height: 16),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
@@ -267,10 +264,7 @@ class _HomePageState extends State<HomePage> {
                       _listings(featured, constraints.maxWidth),
                       const SizedBox(height: 32),
                     ],
-                    _sectionTitle(
-                      'Шинээр нэмэгдсэн',
-                      'Шинэ эхлэлд нэг алхам ойр',
-                    ),
+                    _sectionTitle('Шинээр нэмэгдсэн', 'Сүүлд нэмэгдсэн зарууд'),
                     const SizedBox(height: 16),
                     if (items.isEmpty)
                       EmptyState(
@@ -299,7 +293,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         const SizedBox(height: 14),
                         const Text(
-                          'Таны байр хэн нэгний\nшинэ эхлэл.',
+                          'Зар нийтлэх',
                           style: TextStyle(
                             fontSize: 27,
                             fontWeight: FontWeight.w800,
@@ -327,7 +321,7 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(height: 32),
                   const Center(
                     child: Text(
-                      'ӨРГӨӨ  /  Амьдрах орон зайгаа ол.',
+                      'ӨРГӨӨ · Үл хөдлөх хөрөнгө',
                       style: TextStyle(
                         fontSize: 11,
                         color: AppColors.secondaryText,

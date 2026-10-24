@@ -35,46 +35,21 @@ class HomeHero extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 7,
-                    ),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.white24),
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: const Text(
-                      'ШИНЭ ГЭР. ШИНЭ БОЛОМЖ.',
-                      style: TextStyle(
-                        color: Color(0xFFD2E8C0),
-                        fontSize: 10,
-                        letterSpacing: 1.8,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    'Зүгээр нэг байр биш.\nТаны амьдрах орон зай.',
+                  const Text(
+                    'Байр хайх',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: wide ? 46 : 30,
-                      height: 1.16,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -1.2,
+                      fontSize: 30,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(height: 18),
-                  SizedBox(
-                    width: wide ? 430 : double.infinity,
-                    child: const Text(
-                      'Өөрт тохирох байраа олж, амьдралынхаа\nдараагийн хуудсыг нээгээрэй.',
-                      style: TextStyle(
-                        color: Color(0xFFC1D4CC),
-                        height: 1.7,
-                        fontSize: 14,
-                      ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'Худалдах, түрээслэх үл хөдлөх хөрөнгийн зарууд.',
+                    style: TextStyle(
+                      color: Color(0xFFC1D4CC),
+                      fontSize: 14,
+                      height: 1.5,
                     ),
                   ),
                   const SizedBox(height: 28),
