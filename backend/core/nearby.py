@@ -21,7 +21,7 @@ OVERPASS_URLS = [
     "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
 ]
 CACHE_TTL = 60 * 60  # 1 цаг
-DEFAULT_RADIUS = 2000  # метр
+DEFAULT_RADIUS = 1500  # метр
 PER_CATEGORY = 3
 
 
