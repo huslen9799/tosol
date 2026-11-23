@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../models/property.dart';
 import '../models/nearby_place.dart';
+import '../models/property_comment.dart';
 import 'http_client.dart' if (dart.library.js_interop) 'http_client_web.dart';
 
 class ApiException implements Exception {
@@ -156,6 +157,43 @@ class ApiClient {
       timeout: const Duration(seconds: 90),
     ) as Map<String, dynamic>,
   );
+
+  Future<List<PropertyComment>> comments(int id) async {
+    final data = await request(
+      'GET',
+      'properties/$id/comments/',
+    ) as Map<String, dynamic>;
+    return (data['results'] as List)
+        .map((e) => PropertyComment.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<PropertyComment> addComment(int id, String text) async =>
+      PropertyComment.fromJson(
+        await request(
+          'POST',
+          'properties/$id/comments/',
+          body: {'text': text},
+        ) as Map<String, dynamic>,
+      );
+
+  Future<void> deleteComment(int id, int commentId) =>
+      request('DELETE', 'properties/$id/comments/$commentId/');
+
+  Future<({int likeCount, bool isLiked})> likeComment(
+    int id,
+    int commentId,
+    bool liked,
+  ) async {
+    final data = await request(
+      liked ? 'DELETE' : 'POST',
+      'properties/$id/comments/$commentId/like/',
+    ) as Map<String, dynamic>;
+    return (
+      likeCount: (data['like_count'] as num?)?.toInt() ?? 0,
+      isLiked: data['is_liked'] == true,
+    );
+  }
   Future<Property> saveProperty(Map<String, dynamic> body, {int? id}) async =>
       Property.fromJson(
         await request(

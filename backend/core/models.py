@@ -112,6 +112,25 @@ class Favorite(models.Model):
         constraints = [models.UniqueConstraint(fields=["user", "property"], name="unique_user_favorite")]
 
 
+class PropertyComment(models.Model):
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    text = models.TextField(max_length=2000)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at', '-id']
+
+
+class PropertyCommentLike(models.Model):
+    comment = models.ForeignKey(PropertyComment, on_delete=models.CASCADE, related_name='likes')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['comment', 'user'], name='unique_user_comment_like')]
+
+
 class PasswordResetCode(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     token = models.CharField(max_length=64, unique=True)

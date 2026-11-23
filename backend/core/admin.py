@@ -1,6 +1,14 @@
 from django.contrib import admin
 
-from .models import Property, PropertyImage, Favorite, District, Complex
+from .models import (
+    Property,
+    PropertyImage,
+    Favorite,
+    District,
+    Complex,
+    PropertyComment,
+    PropertyCommentLike,
+)
 
 class PropertyImageInline(admin.TabularInline):
     model = PropertyImage
@@ -14,6 +22,21 @@ class PropertyAdmin(admin.ModelAdmin):
     inlines = [PropertyImageInline]
 
 admin.site.register(Favorite)
+
+
+@admin.register(PropertyComment)
+class PropertyCommentAdmin(admin.ModelAdmin):
+    list_display = ["id", "property", "user", "created_at"]
+    list_filter = ["created_at"]
+    search_fields = ["text", "user__username"]
+    autocomplete_fields = []
+
+
+@admin.register(PropertyCommentLike)
+class PropertyCommentLikeAdmin(admin.ModelAdmin):
+    list_display = ["id", "comment", "user"]
+
+
 @admin.register(District)
 class DistrictAdmin(admin.ModelAdmin):
     list_display = ["name", "description"]

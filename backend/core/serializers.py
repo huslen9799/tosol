@@ -1,7 +1,32 @@
 from rest_framework import serializers
 from decimal import Decimal
 from django.contrib.auth.models import User
-from .models import Property, PropertyImage
+from .models import Property, PropertyImage, PropertyComment
+
+
+class PropertyCommentSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', read_only=True)
+    user_id = serializers.IntegerField(source='user.id', read_only=True)
+    like_count = serializers.SerializerMethodField()
+    is_liked = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PropertyComment
+        fields = ['id', 'username', 'user_id', 'text', 'created_at', 'updated_at', 'like_count', 'is_liked']
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+    def get_like_count(self, obj):
+        count = getattr(obj, 'like_count', None)
+        return count if count is not None else obj.likes.count()
+
+    def get_is_liked(self, obj):
+        request = self.context.get('request')
+        if not request or not request.user.is_authenticated:
+            return False
+        liked_ids = self.context.get('liked_ids')
+        if liked_ids is not None:
+            return obj.pk in liked_ids
+        return obj.likes.filter(user=request.user).exists()
 
 
 class UserSerializer(serializers.ModelSerializer):

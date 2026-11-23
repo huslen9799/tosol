@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../models/property.dart';
 import '../models/nearby_place.dart';
+import '../models/property_comment.dart';
 import '../services/app_store.dart';
 import '../widgets/property_card.dart';
 import '../widgets/property_location.dart';
@@ -450,6 +451,11 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                                 ],
                               ),
                             ],
+                            SizedBox(height: 24),
+                            _CommentsSection(
+                              propertyId: p.id,
+                              canManageAll: p.isOwner || store.isAdmin,
+                            ),
                           ],
                         ),
                       ),
@@ -755,4 +761,274 @@ class _PhotoGalleryState extends State<PhotoGallery> {
       ),
     ),
   );
+}
+
+class _CommentsSection extends StatefulWidget {
+  final int propertyId;
+  final bool canManageAll;
+  const _CommentsSection({required this.propertyId, required this.canManageAll});
+
+  @override
+  State<_CommentsSection> createState() => _CommentsSectionState();
+}
+
+class _CommentsSectionState extends State<_CommentsSection> {
+  final controller = TextEditingController();
+  final comments = <PropertyComment>[];
+  bool started = false, loading = true, busy = false, posting = false;
+  String? error;
+  bool? _wasLoggedIn;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final loggedIn = AppScope.of(context).loggedIn;
+    if (!started) {
+      started = true;
+      _wasLoggedIn = loggedIn;
+      load();
+    } else if (_wasLoggedIn != loggedIn) {
+      // Guest → нэвтэрсэн үед устгах эрх, өөрийн like-ыг дахин татах.
+      _wasLoggedIn = loggedIn;
+      load();
+    }
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> load() async {
+    final api = AppScope.read(context).api;
+    try {
+      final result = await api.comments(widget.propertyId);
+      if (mounted) {
+        setState(() {
+          comments
+            ..clear()
+            ..addAll(result);
+          error = null;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => error = '$e');
+    } finally {
+      if (mounted) setState(() => loading = false);
+    }
+  }
+
+  Future<void> post() async {
+    if (!await requireLogin(context) || !mounted) return;
+    final text = controller.text.trim();
+    if (text.isEmpty || text.length > 2000) {
+      showMessage(context, '1–2000 тэмдэгттэй сэтгэгдэл бичнэ үү.');
+      return;
+    }
+    setState(() => posting = true);
+    try {
+      await AppScope.read(context).api.addComment(widget.propertyId, text);
+      if (!mounted) return;
+      controller.clear();
+      await load();
+    } catch (e) {
+      if (mounted) showMessage(context, e);
+    } finally {
+      if (mounted) setState(() => posting = false);
+    }
+  }
+
+  Future<void> remove(PropertyComment item) async {
+    final accepted = await showDialog<bool>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: Text('Сэтгэгдлийг устгах уу?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(c, false),
+            child: Text('Болих'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(c, true),
+            child: Text('Устгах'),
+          ),
+        ],
+      ),
+    );
+    if (accepted != true || !mounted) return;
+    setState(() => busy = true);
+    try {
+      await AppScope.read(context).api.deleteComment(
+        widget.propertyId,
+        item.id,
+      );
+      if (mounted) await load();
+    } catch (e) {
+      if (mounted) showMessage(context, e);
+    } finally {
+      if (mounted) setState(() => busy = false);
+    }
+  }
+
+  Future<void> like(PropertyComment item) async {
+    if (!await requireLogin(context) || !mounted) return;
+    setState(() => busy = true);
+    try {
+      final result = await AppScope.read(
+        context,
+      ).api.likeComment(widget.propertyId, item.id, item.isLiked);
+      if (!mounted) return;
+      setState(() {
+        final index = comments.indexWhere((c) => c.id == item.id);
+        if (index != -1) {
+          comments[index] = comments[index].copyWith(
+            likeCount: result.likeCount,
+            isLiked: result.isLiked,
+          );
+        }
+      });
+    } catch (e) {
+      if (mounted) showMessage(context, e);
+    } finally {
+      if (mounted) setState(() => busy = false);
+    }
+  }
+
+  String _formatTime(String iso) {
+    if (iso.isEmpty) return '';
+    final value = iso.replaceFirst('Z', '');
+    final date = value.split('T').first;
+    final time = value.length > 11 ? value.substring(11, 16) : '';
+    return time.isEmpty ? date : '$date • $time';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final store = AppScope.of(context);
+    final loggedIn = store.loggedIn;
+    final myId = (store.user?['id'] as num?)?.toInt();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.chat_bubble_outline, color: Color(0xFF8394E6)),
+            SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                'Сэтгэгдэл • ${comments.length}',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 12),
+        if (loading)
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: Center(child: CircularProgressIndicator()),
+          )
+        else if (error != null)
+          EmptyState(
+            title: 'Сэтгэгдэл ачаалж чадсангүй',
+            message: error!,
+            onRetry: load,
+          )
+        else ...[
+          if (loggedIn)
+            TextField(
+              controller: controller,
+              enabled: !posting,
+              maxLength: 2000,
+              minLines: 2,
+              maxLines: 5,
+              decoration: InputDecoration(
+                labelText: 'Сэтгэгдэл бичих',
+                hintText: 'Байрны талаарх асуулт, сэтгэгдлээ хуваалцаарай.',
+              ),
+            )
+          else
+            Card(
+              child: ListTile(
+                leading: Icon(Icons.lock_outline),
+                title: Text('Сэтгэгдэл бичих'),
+                subtitle: Text('Сэтгэгдэл үлдээхийн тулд нэвтэрнэ үү.'),
+                trailing: TextButton(
+                  onPressed: () => requireLogin(context),
+                  child: Text('Нэвтрэх'),
+                ),
+              ),
+            ),
+          if (loggedIn)
+            Align(
+              alignment: Alignment.centerRight,
+              child: FilledButton(
+                onPressed: posting ? null : post,
+                child: Text('Нийтлэх'),
+              ),
+            ),
+          SizedBox(height: 8),
+          if (comments.isEmpty)
+            Padding(
+              padding: EdgeInsets.all(16),
+              child: Text('Сэтгэгдэл хараахан алга.'),
+            ),
+          for (final item in comments)
+            Card(
+              margin: EdgeInsets.only(bottom: 10),
+              child: Padding(
+                padding: EdgeInsets.all(14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            item.username,
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Text(
+                          _formatTime(item.createdAt),
+                          style: TextStyle(fontSize: 12),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8),
+                    Text(item.text),
+                    SizedBox(height: 4),
+                    Row(
+                      children: [
+                        TextButton.icon(
+                          onPressed: busy ? null : () => like(item),
+                          icon: Icon(
+                            item.isLiked
+                                ? Icons.thumb_up
+                                : Icons.thumb_up_outlined,
+                            size: 18,
+                            color: item.isLiked ? Color(0xFF8394E6) : null,
+                          ),
+                          label: Text('${item.likeCount}'),
+                        ),
+                        Spacer(),
+                        if ((item.userId != null && item.userId == myId) ||
+                            widget.canManageAll)
+                          TextButton(
+                            onPressed: busy ? null : () => remove(item),
+                            child: Text('Устгах'),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ],
+    );
+  }
 }

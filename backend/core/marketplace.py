@@ -5,15 +5,17 @@ from requests.exceptions import RequestException
 from rest_framework.exceptions import APIException
 from decimal import Decimal, InvalidOperation
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, serializers
 from rest_framework.decorators import action, api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, BasePermission, SAFE_METHODS
+from rest_framework.exceptions import APIException, PermissionDenied
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, BasePermission, SAFE_METHODS
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
-from .models import Property, PropertyImage, Favorite
-from .serializers import PropertySerializer, PropertyImageSerializer, UserSerializer
+from .models import Property, PropertyImage, Favorite, PropertyComment, PropertyCommentLike
+from .serializers import PropertySerializer, PropertyImageSerializer, PropertyCommentSerializer, UserSerializer
 from .nearby import nearby_amenities, NearbyUnavailable
 
 
@@ -215,6 +217,72 @@ class PropertyViewSet(viewsets.ModelViewSet):
         except (CloudinaryError, RequestException, URLError, TimeoutError, ValueError) as error:
             raise photo_upload_error(error) from None
         return Response(PropertyImageSerializer(photos, many=True, context={"request": request}).data, status=201)
+
+    @action(detail=True, methods=["get", "post"], permission_classes=[IsAuthenticatedOrReadOnly])
+    def comments(self, request, pk=None):
+        # Гость харах боломжтой; зөвхөн нэвтэрсэн хэрэглэгч сэтгэгдэл бичнэ.
+        listing = self.get_object()
+        if request.method == "POST":
+            serializer = PropertyCommentSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            comment = serializer.save(property=listing, user=request.user)
+            return Response(
+                PropertyCommentSerializer(comment, context={"request": request}).data,
+                status=201,
+            )
+        comments = (
+            listing.comments.select_related("user")
+            .annotate(like_count=Count("likes"))
+            .all()
+        )
+        liked_ids = (
+            set(
+                PropertyCommentLike.objects.filter(
+                    user=request.user, comment__property=listing
+                ).values_list("comment_id", flat=True)
+            )
+            if request.user.is_authenticated
+            else set()
+        )
+        page = self.paginate_queryset(comments)
+        serializer = PropertyCommentSerializer(
+            page, many=True, context={"request": request, "liked_ids": liked_ids}
+        )
+        return self.get_paginated_response(serializer.data)
+
+    @action(
+        detail=True,
+        methods=["delete"],
+        url_path=r"comments/(?P<comment_id>\d+)",
+        permission_classes=[IsAuthenticated],
+    )
+    def comment(self, request, pk=None, comment_id=None):
+        listing = self.get_object()
+        item = get_object_or_404(PropertyComment, property=listing, pk=comment_id)
+        can_delete = (
+            item.user_id == request.user.pk
+            or listing.owner_id == request.user.pk
+            or request.user.is_staff
+        )
+        if not can_delete:
+            raise PermissionDenied("Энэ сэтгэгдлийг устгах эрхгүй байна.")
+        item.delete()
+        return Response(status=204)
+
+    @action(
+        detail=True,
+        methods=["post", "delete"],
+        url_path=r"comments/(?P<comment_id>\d+)/like",
+        permission_classes=[IsAuthenticated],
+    )
+    def comment_like(self, request, pk=None, comment_id=None):
+        listing = self.get_object()
+        item = get_object_or_404(PropertyComment, property=listing, pk=comment_id)
+        if request.method == "POST":
+            PropertyCommentLike.objects.get_or_create(comment=item, user=request.user)
+            return Response({"like_count": item.likes.count(), "is_liked": True})
+        PropertyCommentLike.objects.filter(comment=item, user=request.user).delete()
+        return Response({"like_count": item.likes.count(), "is_liked": False})
 
 
 @api_view(["GET", "PATCH"])
