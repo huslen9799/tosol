@@ -90,7 +90,7 @@ void main() {
     expect(first['saved'], 'true');
     expect(first['located'], 'true');
     expect(first['bbox']!.split(',').length, 4);
-    await tester.tap(find.text('350,000,000 ₮'));
+    await tester.tap(find.byTooltip('350,000,000 ₮'));
     await tester.pumpAndSettle();
     expect(find.text(fixtures.sample['title'] as String), findsOneWidget);
     expect(tester.takeException(), isNull);
@@ -134,7 +134,7 @@ void main() {
       expect(values[2], greaterThan(106.9177));
       expect(values[1], lessThan(47.9185));
       expect(values[3], greaterThan(47.9185));
-      await tester.tap(find.text('350 сая'));
+      await tester.tap(find.byTooltip('350 сая'));
       expect(opened, isTrue);
       await tester.tapAt(const Offset(300, 200));
       expect(selected!.latitude, closeTo(47.9185, 0.00001));

@@ -435,7 +435,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(requests.length, greaterThan(previous));
       expect(requests.last.url.queryParameters['listing_type'], 'sale');
-      await tester.tap(find.text('350,000,000 ₮').last);
+      await tester.tap(find.byTooltip('350,000,000 ₮').last);
       await tester.pumpAndSettle();
       expect(find.text('СОНГОСОН БАЙР'), findsOneWidget);
       expect(tester.takeException(), isNull);

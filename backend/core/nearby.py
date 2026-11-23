@@ -4,12 +4,22 @@
 буудал, дэлгүүр/худалдааны төвийг Overpass API-аас хайж, зайг туулайгаар
 тооцно. Үр дүнг Django cache-д түр хадгалж давтан хүсэлтээс сэргийлнэ.
 """
+import logging
 import math
 
 import requests
 from django.core.cache import cache
 
-OVERPASS_URL = "https://overpass-api.de/api/interpreter"
+logger = logging.getLogger(__name__)
+
+# Нийтийн Overpass mirror-үүд. Нэг нь унасан/хязгаарлагдсан ч бусдаар
+# оролдох боломжтой. Дараалал: хамгийн найдвартай нь эхэнд.
+OVERPASS_URLS = [
+    "https://overpass-api.de/api/interpreter",
+    "https://overpass.kumi.systems/api/interpreter",
+    "https://overpass.private.coffee/api/interpreter",
+    "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
+]
 CACHE_TTL = 60 * 60  # 1 цаг
 DEFAULT_RADIUS = 2000  # метр
 PER_CATEGORY = 3
@@ -104,18 +114,24 @@ def _build_query(latitude, longitude, radius):
 
 def _fetch(latitude, longitude, radius):
     query = _build_query(latitude, longitude, radius)
-    try:
-        response = requests.get(
-            OVERPASS_URL,
-            params={"data": query},
-            timeout=30,
-            headers={"User-Agent": "UgeuBairApp/1.0 (nearby lookup)"},
-        )
-        response.raise_for_status()
-        payload = response.json()
-    except Exception as error:  # сүлжээ, timeout, буруу JSON
-        raise NearbyUnavailable(str(error)) from error
-    return payload.get("elements", [])
+    errors = []
+    for url in OVERPASS_URLS:
+        try:
+            response = requests.get(
+                url,
+                params={"data": query},
+                timeout=15,
+                headers={"User-Agent": "UgeuBairApp/1.0 (nearby lookup)"},
+            )
+            response.raise_for_status()
+            payload = response.json()
+            elements = payload.get("elements", [])
+            logger.info("Nearby Overpass ok via %s (%d elements)", url, len(elements))
+            return elements
+        except Exception as error:  # сүлжээ, timeout, буруу JSON
+            errors.append(f"{url}: {error}")
+            logger.warning("Nearby Overpass failed via %s: %s", url, error)
+    raise NearbyUnavailable("; ".join(errors))
 
 
 def nearby_amenities(latitude, longitude, radius=DEFAULT_RADIUS, per_category=PER_CATEGORY):

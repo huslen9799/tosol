@@ -171,6 +171,7 @@ class PropertyViewSet(viewsets.ModelViewSet):
         try:
             data = nearby_amenities(latitude, longitude)
         except NearbyUnavailable as error:
+            logger.warning("Nearby lookup failed for property %s: %s", listing.pk, error)
             return Response(
                 {
                     "available": False,
@@ -179,6 +180,7 @@ class PropertyViewSet(viewsets.ModelViewSet):
                     "longitude": longitude,
                     "categories": [],
                     "message": "Ойр байрлах газрыг түр ачаалж чадсангүй.",
+                    "detail": str(error)[:500],
                 }
             )
         data["available"] = True

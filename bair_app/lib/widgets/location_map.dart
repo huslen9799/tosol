@@ -206,39 +206,24 @@ class _LocationMapState extends State<LocationMap> {
                 ),
               ),
             ),
-            for (final pin in widget.pins)
+for (final pin in widget.pins)
               Positioned(
-                left: project(pin.point).dx - origin.dx - 55,
-                top: project(pin.point).dy - origin.dy - 36,
-                width: 110,
-                height: 36,
+                left: project(pin.point).dx - origin.dx - 22,
+                top: project(pin.point).dy - origin.dy - 44,
+                width: 44,
+                height: 44,
                 child: Tooltip(
                   message: pin.label,
-                  child: FilledButton(
-                    style: FilledButton.styleFrom(
-                      backgroundColor:
-                          pin.color ??
-                          (pin.selected
-                              ? Color(0xFF8394E6)
-                              : Theme.of(context).colorScheme.surface),
-                      foregroundColor: pin.color != null || pin.selected
-                          ? Colors.white
-                          : Color(0xFF8394E6),
-                      elevation: pin.selected ? 5 : pin.color != null ? 3 : 2,
-                      side: BorderSide(
-                        color:
-                            pin.color ??
-                            (pin.selected
-                                ? Color(0xFF8394E6)
-                                : Color(0xFFDCE6F4)),
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: pin.onTap,
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Icon(
+                        Icons.location_on_rounded,
+                        size: pin.selected ? 40 : 32,
+                        color: pin.color ?? Color(0xFF8394E6),
                       ),
-                      padding: EdgeInsets.symmetric(horizontal: 6),
-                    ),
-                    onPressed: pin.onTap ?? () {},
-                    child: Text(
-                      pin.label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ),
