@@ -29,16 +29,17 @@ class NearbyUnavailable(Exception):
     """Overpass API болон сүлжээний алдааг илэрхийлэх."""
 
 
-# Ангилал: key -> (харуулах нэр, Overpass-ийн nwr шүүлтүүр).
-# nwr = node + way + relation (нэг clause-д багтана) -> хурдан.
+# Ангилал: key -> (харуулах нэр, Overpass-ийн node шүүлтүүр).
+# node-only (way/relation-г оруулдаггүй) -> Overpass хурдан хариулна.
+# OSM-д сургууль/цэцэрлэг/эмийн сан/буудал/дэлгүүр ихэнх нь node хэлбэртэй.
 CATEGORIES = {
-    "school": ("Сургууль", 'nwr["amenity"="school"]'),
-    "kindergarten": ("Цэцэрлэг", 'nwr["amenity"="kindergarten"]'),
-    "pharmacy": ("Эмийн сан", 'nwr["amenity"="pharmacy"]'),
-    "bus_stop": ("Автобусны буудал", 'nwr["highway"="bus_stop"]'),
+    "school": ("Сургууль", 'node["amenity"="school"]'),
+    "kindergarten": ("Цэцэрлэг", 'node["amenity"="kindergarten"]'),
+    "pharmacy": ("Эмийн сан", 'node["amenity"="pharmacy"]'),
+    "bus_stop": ("Автобусны буудал", 'node["highway"="bus_stop"]'),
     "shop": (
         "Дэлгүүр / худалдааны төв",
-        'nwr["shop"~"^(supermarket|mall|convenience|department_store)$"]',
+        'node["shop"~"^(supermarket|mall|convenience|department_store)$"]',
     ),
 }
 
@@ -94,7 +95,7 @@ def _build_query(latitude, longitude, radius):
     parts = []
     for _label, node_filter in CATEGORIES.values():
         parts.append(f"{node_filter}(around:{radius},{latitude},{longitude});")
-    return "[out:json][timeout:25];(" + "".join(parts) + ");out center;"
+    return "[out:json][timeout:25];(" + "".join(parts) + ");out;"
 
 
 def _fetch(latitude, longitude, radius):

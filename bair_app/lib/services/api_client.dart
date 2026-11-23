@@ -66,6 +66,7 @@ class ApiClient {
     String path, {
     Map<String, dynamic>? body,
     Map<String, String>? query,
+    Duration timeout = const Duration(seconds: 25),
   }) async {
     final request = http.Request(method, uri(path, query));
     request.headers['Content-Type'] = 'application/json';
@@ -79,12 +80,9 @@ class ApiClient {
       });
     }
     try {
-      final streamed = await client
-          .send(request)
-          .timeout(const Duration(seconds: 25));
+      final streamed = await client.send(request).timeout(timeout);
       final data = decode(
-        await http.Response.fromStream(streamed)
-            .timeout(const Duration(seconds: 25)),
+        await http.Response.fromStream(streamed).timeout(timeout),
       );
       if ((path == 'register/' || path == 'resend-otp/') && data is Map) {
         _registrationToken = data['registration_token'] as String?;
@@ -152,7 +150,11 @@ class ApiClient {
     await request('GET', 'properties/$id/') as Map<String, dynamic>,
   );
   Future<NearbyResult> nearby(int id) async => NearbyResult.fromJson(
-    await request('GET', 'properties/$id/nearby/') as Map<String, dynamic>,
+    await request(
+      'GET',
+      'properties/$id/nearby/',
+      timeout: const Duration(seconds: 90),
+    ) as Map<String, dynamic>,
   );
   Future<Property> saveProperty(Map<String, dynamic> body, {int? id}) async =>
       Property.fromJson(

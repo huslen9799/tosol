@@ -59,7 +59,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
         });
       }
       if (p.latitude != null && p.longitude != null) {
-        await loadNearby();
+        loadNearby(); // background — байрны мэдээллийг даруй харуулах
       } else if (mounted) {
         setState(() => nearby = null);
       }
