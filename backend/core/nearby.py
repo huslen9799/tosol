@@ -29,30 +29,16 @@ class NearbyUnavailable(Exception):
     """Overpass API болон сүлжээний алдааг илэрхийлэх."""
 
 
-# Ангилал: key -> (харуулах нэр, Overpass-ийн node/way шүүлтүүрүүд)
+# Ангилал: key -> (харуулах нэр, Overpass-ийн nwr шүүлтүүр).
+# nwr = node + way + relation (нэг clause-д багтана) -> хурдан.
 CATEGORIES = {
-    "school": (
-        "Сургууль",
-        ['node["amenity"="school"]', 'way["amenity"="school"]'],
-    ),
-    "kindergarten": (
-        "Цэцэрлэг",
-        ['node["amenity"="kindergarten"]', 'way["amenity"="kindergarten"]'],
-    ),
-    "pharmacy": (
-        "Эмийн сан",
-        ['node["amenity"="pharmacy"]', 'way["amenity"="pharmacy"]'],
-    ),
-    "bus_stop": (
-        "Автобусны буудал",
-        ['node["highway"="bus_stop"]'],
-    ),
+    "school": ("Сургууль", 'nwr["amenity"="school"]'),
+    "kindergarten": ("Цэцэрлэг", 'nwr["amenity"="kindergarten"]'),
+    "pharmacy": ("Эмийн сан", 'nwr["amenity"="pharmacy"]'),
+    "bus_stop": ("Автобусны буудал", 'nwr["highway"="bus_stop"]'),
     "shop": (
         "Дэлгүүр / худалдааны төв",
-        [
-            'node["shop"~"^(supermarket|mall|convenience|department_store)$"]',
-            'way["shop"~"^(supermarket|mall|convenience|department_store)$"]',
-        ],
+        'nwr["shop"~"^(supermarket|mall|convenience|department_store)$"]',
     ),
 }
 
@@ -106,9 +92,8 @@ def _element_point(element):
 
 def _build_query(latitude, longitude, radius):
     parts = []
-    for _label, filters in CATEGORIES.values():
-        for node_filter in filters:
-            parts.append(f"{node_filter}(around:{radius},{latitude},{longitude});")
+    for _label, node_filter in CATEGORIES.values():
+        parts.append(f"{node_filter}(around:{radius},{latitude},{longitude});")
     return "[out:json][timeout:25];(" + "".join(parts) + ");out center;"
 
 
@@ -120,7 +105,7 @@ def _fetch(latitude, longitude, radius):
             response = requests.get(
                 url,
                 params={"data": query},
-                timeout=15,
+                timeout=30,
                 headers={"User-Agent": "UgeuBairApp/1.0 (nearby lookup)"},
             )
             response.raise_for_status()
@@ -169,7 +154,7 @@ def nearby_amenities(latitude, longitude, radius=DEFAULT_RADIUS, per_category=PE
         )
 
     categories = []
-    for key, (label, _filters) in CATEGORIES.items():
+    for key, (label, _node_filter) in CATEGORIES.items():
         places = sorted(grouped[key], key=lambda item: item["distance"])[:per_category]
         categories.append({"key": key, "label": label, "places": places})
 
