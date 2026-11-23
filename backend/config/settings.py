@@ -292,6 +292,15 @@ if RESEND_API_KEY:
         "OPTIONS": {"api_key": RESEND_API_KEY, "timeout": 10},
     }
 
+# Brevo (optional): verified single sender, no domain required.
+# When BREVO_API_KEY is set it takes precedence over Resend.
+BREVO_API_KEY = os.environ.get("BREVO_API_KEY", "").strip()
+if BREVO_API_KEY:
+    MAILERS["default"] = {
+        "BACKEND": "core.email_backends.BrevoEmailBackend",
+        "OPTIONS": {"api_key": BREVO_API_KEY, "timeout": 10},
+    }
+
 # Neon and other hosted PostgreSQL services provide a standard connection URL.
 if os.environ.get("DATABASE_URL"):
     _connection = conninfo_to_dict(os.environ["DATABASE_URL"])

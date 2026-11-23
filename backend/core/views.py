@@ -27,15 +27,13 @@ REGISTRATION_SALT = "core.registration-session"
 
 
 def email_delivery_error(error):
-    # Resend-ийн тест горим (onboarding@resend.dev) нь зөвхөн дансны
-    # эзэмшигчийн и-мэйл рүү хүргэдэг. Өөр хаяг руу илгээхэд 403/422 буцаадаг.
+    # 403/422 = илгээгчийн хаяг баталгаажаагүй (Brevo sender / Resend domain).
     lowered = str(error).lower()
-    if any(token in lowered for token in ("403", "422", "test recipient", "domain", "not verified")):
+    if any(token in lowered for token in ("403", "422", "sender", "domain", "not verified", "test recipient")):
         return (
-            "И-мэйл илгээх үед алдаа гарлаа. Resend-ийн тест горимд зөвхөн "
-            "дансны эзэмшигчийн и-мэйл рүү илгээгдэнэ. Өөр хаяг руу "
-            "илгээхийн тулд Resend-д domain баталгаажуулаад "
-            "DEFAULT_FROM_EMAIL-ээ тохируулаарай."
+            "И-мэйл илгээх үед алдаа гарлаа. Илгээгчийн хаяг "
+            "(DEFAULT_FROM_EMAIL) баталгаажаагүй байна. Brevo бол Sender-ээ, "
+            "Resend бол domain-оо баталгаажуулаарай."
         )
     return "И-мэйл илгээх үед алдаа гарлаа. Түр хүлээгээд дахин оролдоно уу."
 
