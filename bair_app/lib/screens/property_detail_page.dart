@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../models/property.dart';
+import '../models/nearby_place.dart';
 import '../services/app_store.dart';
 import '../widgets/property_card.dart';
 import '../widgets/property_location.dart';
@@ -23,6 +24,9 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
   bool loading = true, deleting = false;
   int photoIndex = 0;
   final photoController = PageController();
+  NearbyResult? nearby;
+  bool nearbyLoading = false;
+  String? nearbyError;
   @override
   void dispose() {
     photoController.dispose();
@@ -54,10 +58,31 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
           photoIndex = 0;
         });
       }
+      if (p.latitude != null && p.longitude != null) {
+        await loadNearby();
+      } else if (mounted) {
+        setState(() => nearby = null);
+      }
     } catch (e) {
       if (mounted) setState(() => error = '$e');
     } finally {
       if (mounted) setState(() => loading = false);
+    }
+  }
+
+  Future<void> loadNearby() async {
+    final store = AppScope.read(context);
+    setState(() {
+      nearbyLoading = true;
+      nearbyError = null;
+    });
+    try {
+      final result = await store.api.nearby(widget.id);
+      if (mounted) setState(() => nearby = result);
+    } catch (e) {
+      if (mounted) setState(() => nearbyError = '$e');
+    } finally {
+      if (mounted) setState(() => nearbyLoading = false);
     }
   }
 
@@ -333,6 +358,16 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                                       ),
                                     ),
                             ),
+                            if (nearby != null ||
+                                nearbyLoading ||
+                                nearbyError != null) ...[
+                              SizedBox(height: 20),
+                              _NearbySection(
+                                result: nearby,
+                                loading: nearbyLoading,
+                                error: nearbyError,
+                              ),
+                            ],
                             SizedBox(height: 12),
                             Text(
                               'Зар нийтэлсэн',
@@ -494,6 +529,173 @@ class _Fact extends StatelessWidget {
       ],
     ),
   );
+}
+
+const _nearbyIcons = {
+  'school': Icons.school_outlined,
+  'kindergarten': Icons.child_care,
+  'pharmacy': Icons.local_pharmacy_outlined,
+  'bus_stop': Icons.directions_bus_outlined,
+  'shop': Icons.storefront_outlined,
+};
+const _nearbyColors = {
+  'school': Color(0xFF6366F1),
+  'kindergarten': Color(0xFFF59E0B),
+  'pharmacy': Color(0xFFEF4444),
+  'bus_stop': Color(0xFF14B8A6),
+  'shop': Color(0xFFA855F7),
+};
+
+class _NearbySection extends StatelessWidget {
+  final NearbyResult? result;
+  final bool loading;
+  final String? error;
+  const _NearbySection({
+    required this.result,
+    required this.loading,
+    required this.error,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (loading && result == null) {
+      return Card(
+        child: Padding(
+          padding: EdgeInsets.all(20),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+              SizedBox(width: 14),
+              Text(
+                'Ойр байрлах газрыг хайж байна…',
+                style: TextStyle(fontSize: 14),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final r = result;
+    if (r == null) {
+      if (error != null) {
+        return Card(
+          child: ListTile(
+            leading: Icon(Icons.near_me_outlined, color: Color(0xFF8394E6)),
+            title: Text('Ойр байрлах газрыг ачаалж чадсангүй.'),
+            subtitle: Text('Интернэтээ шалгаад дахин оролдоно уу.'),
+          ),
+        );
+      }
+      return SizedBox.shrink();
+    }
+
+    final categories = r.categories;
+    return Card(
+      child: Padding(
+        padding: EdgeInsets.all(18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.near_me_outlined, color: Color(0xFF8394E6)),
+                SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'Ойр байрлах газрууд',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 4),
+            Text(
+              'Байрнаас хамгийн ойр байгууллагууд (эх сурвалж: OpenStreetMap).',
+              style: TextStyle(fontSize: 12, height: 1.4),
+            ),
+            SizedBox(height: 14),
+            if (categories.isEmpty)
+              Text(
+                r.available
+                    ? 'Энэ орчимд ойр байрлах газар олдсонгүй.'
+                    : 'Ойр байрлах газрын мэдээлэл түр ачаалагдаагүй байна.',
+                style: TextStyle(fontSize: 13),
+              )
+            else
+              for (final category in categories)
+                Padding(
+                  padding: EdgeInsets.only(bottom: 14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            _nearbyIcons[category.key] ?? Icons.place_outlined,
+                            size: 19,
+                            color:
+                                _nearbyColors[category.key] ??
+                                Color(0xFF8394E6),
+                          ),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              category.label,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(fontWeight: FontWeight.w700),
+                            ),
+                          ),
+                          if (category.nearest != null)
+                            Text(
+                              category.nearest!.distanceLabel,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF8394E6),
+                              ),
+                            ),
+                        ],
+                      ),
+                      for (final place in category.places)
+                        Padding(
+                          padding: EdgeInsets.only(left: 27, top: 2),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  place.name.isEmpty
+                                      ? category.label
+                                      : place.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(fontSize: 13),
+                                ),
+                              ),
+                              Text(
+                                place.distanceLabel,
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class PhotoGallery extends StatefulWidget {

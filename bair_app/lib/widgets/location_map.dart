@@ -16,7 +16,14 @@ class MapPin {
   final String label;
   final VoidCallback? onTap;
   final bool selected;
-  const MapPin(this.point, this.label, {this.onTap, this.selected = false});
+  final Color? color;
+  const MapPin(
+    this.point,
+    this.label, {
+    this.onTap,
+    this.selected = false,
+    this.color,
+  });
 }
 
 /// Web Mercator map. Coordinates are stored separately from the written address.
@@ -209,17 +216,21 @@ class _LocationMapState extends State<LocationMap> {
                   message: pin.label,
                   child: FilledButton(
                     style: FilledButton.styleFrom(
-                      backgroundColor: pin.selected
-                          ? Color(0xFF8394E6)
-                          : Theme.of(context).colorScheme.surface,
-                      foregroundColor: pin.selected
+                      backgroundColor:
+                          pin.color ??
+                          (pin.selected
+                              ? Color(0xFF8394E6)
+                              : Theme.of(context).colorScheme.surface),
+                      foregroundColor: pin.color != null || pin.selected
                           ? Colors.white
                           : Color(0xFF8394E6),
-                      elevation: pin.selected ? 5 : 2,
+                      elevation: pin.selected ? 5 : pin.color != null ? 3 : 2,
                       side: BorderSide(
-                        color: pin.selected
-                            ? Color(0xFF8394E6)
-                            : Color(0xFFDCE6F4),
+                        color:
+                            pin.color ??
+                            (pin.selected
+                                ? Color(0xFF8394E6)
+                                : Color(0xFFDCE6F4)),
                       ),
                       padding: EdgeInsets.symmetric(horizontal: 6),
                     ),

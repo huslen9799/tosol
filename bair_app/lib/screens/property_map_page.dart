@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'filter_sheet.dart';
 
 import '../models/property.dart';
+import '../models/nearby_place.dart';
 import '../services/app_store.dart';
 import '../widgets/location_map.dart';
 import '../widgets/property_card.dart';
@@ -32,6 +33,47 @@ class _PropertyMapPageState extends State<PropertyMapPage> {
   Timer? debounce;
   bool autoSearch = true, showResults = false;
   Property? selected;
+  bool showNearby = false, nearbyLoading = false;
+  NearbyResult? nearby;
+  String? nearbyError;
+  int? nearbyFor;
+
+  static const _nearbyColors = {
+    'school': Color(0xFF6366F1),
+    'kindergarten': Color(0xFFF59E0B),
+    'pharmacy': Color(0xFFEF4444),
+    'bus_stop': Color(0xFF14B8A6),
+    'shop': Color(0xFFA855F7),
+  };
+
+  Future<void> loadNearby(Property property) async {
+    if (property.latitude == null || property.longitude == null) return;
+    setState(() {
+      nearbyLoading = true;
+      nearbyError = null;
+      nearbyFor = property.id;
+    });
+    try {
+      final result = await AppScope.read(context).api.nearby(property.id);
+      if (!mounted || nearbyFor != property.id) return;
+      setState(() => nearby = result);
+    } catch (e) {
+      if (mounted && nearbyFor == property.id) {
+        setState(() => nearbyError = '$e');
+      }
+    } finally {
+      if (mounted && nearbyFor == property.id) setState(() => nearbyLoading = false);
+    }
+  }
+
+  void toggleNearby() {
+    if (!showNearby && (selected == null || selected!.latitude == null)) {
+      showMessage(context, 'Эхлээд газрын зурагт байрны тэмдэглэгээ сонгоорой.');
+      return;
+    }
+    setState(() => showNearby = !showNearby);
+    if (showNearby && selected != null) loadNearby(selected!);
+  }
 
   @override
   void initState() {
@@ -165,6 +207,17 @@ class _PropertyMapPageState extends State<PropertyMapPage> {
                 tooltip: 'Шүүлтүүр',
                 icon: Icon(Icons.tune),
               ),
+              SizedBox(width: 10),
+              IconButton.filledTonal(
+                onPressed: toggleNearby,
+                tooltip: 'Ойр байр',
+                isSelected: showNearby,
+                icon: Icon(
+                  showNearby
+                      ? Icons.near_me_rounded
+                      : Icons.near_me_outlined,
+                ),
+              ),
             ],
           ),
         ),
@@ -181,25 +234,44 @@ class _PropertyMapPageState extends State<PropertyMapPage> {
                           : MapPoint(selected!.latitude!, selected!.longitude!),
                       tileBuilder: widget.tileBuilder,
                       onBoundsChanged: boundsChanged,
-                      pins: items
-                          .where(
-                            (p) => p.latitude != null && p.longitude != null,
-                          )
-                          .map(
-                            (p) => MapPin(
-                              MapPoint(p.latitude!, p.longitude!),
-                              p.priceLabel,
-                              selected: selected?.id == p.id,
-                              onTap: () {
-                                if (wide) {
-                                  setState(() => selected = p);
-                                } else {
-                                  select(p);
-                                }
-                              },
-                            ),
-                          )
-                          .toList(),
+                      pins: [
+                          ...items
+                              .where(
+                                (p) =>
+                                    p.latitude != null && p.longitude != null,
+                              )
+                              .map(
+                                (p) => MapPin(
+                                  MapPoint(p.latitude!, p.longitude!),
+                                  p.priceLabel,
+                                  selected: selected?.id == p.id,
+                                  onTap: () {
+                                    if (wide) {
+                                      setState(() => selected = p);
+                                      if (showNearby) loadNearby(p);
+                                    } else {
+                                      setState(() => selected = p);
+                                      if (showNearby) loadNearby(p);
+                                      select(p);
+                                    }
+                                  },
+                                ),
+                              ),
+                          if (showNearby && nearby != null)
+                            for (final category in nearby!.categories)
+                              for (final place in category.places)
+                                MapPin(
+                                  MapPoint(place.latitude, place.longitude),
+                                  '${category.label}: ${place.distanceLabel}',
+                                  color:
+                                      _nearbyColors[category.key] ??
+                                      Color(0xFF8394E6),
+                                  onTap: () => showMessage(
+                                    context,
+                                    '${category.label} — ${place.name} (${place.distanceLabel})',
+                                  ),
+                                ),
+                        ],
                     ),
                   ),
                   Positioned(
@@ -375,10 +447,13 @@ class _PropertyMapPageState extends State<PropertyMapPage> {
                     ),
                   PropertyCard(property: p),
                   TextButton.icon(
-                    onPressed: () => setState(() {
-                      selected = p;
-                      showResults = false;
-                    }),
+                    onPressed: () {
+                      setState(() {
+                        selected = p;
+                        showResults = false;
+                      });
+                      if (showNearby) loadNearby(p);
+                    },
                     icon: Icon(Icons.place_outlined, size: 17),
                     label: Text('Газрын зурагт харах'),
                   ),

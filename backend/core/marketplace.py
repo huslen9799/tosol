@@ -14,6 +14,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from .models import Property, PropertyImage, Favorite
 from .serializers import PropertySerializer, PropertyImageSerializer, UserSerializer
+from .nearby import nearby_amenities, NearbyUnavailable
 
 
 logger = logging.getLogger(__name__)
@@ -150,6 +151,38 @@ class PropertyViewSet(viewsets.ModelViewSet):
             return Response({"is_favorite": True})
         Favorite.objects.filter(user=request.user, property=property).delete()
         return Response({"is_favorite": False})
+
+    @action(detail=True, methods=["get"])
+    def nearby(self, request, pk=None):
+        # Байрны ойр байрлах нийтийн газрууд (сургууль, цэцэрлэг, эмийн сан,
+        # автобусны буудал, дэлгүүр). Гоц харагдах, нэвтрэх шаардлагагүй.
+        listing = self.get_object()
+        latitude, longitude = listing.latitude, listing.longitude
+        if latitude is None or longitude is None:
+            return Response(
+                {
+                    "available": False,
+                    "reason": "no_coordinates",
+                    "latitude": None,
+                    "longitude": None,
+                    "categories": [],
+                }
+            )
+        try:
+            data = nearby_amenities(latitude, longitude)
+        except NearbyUnavailable as error:
+            return Response(
+                {
+                    "available": False,
+                    "reason": "unavailable",
+                    "latitude": latitude,
+                    "longitude": longitude,
+                    "categories": [],
+                    "message": "Ойр байрлах газрыг түр ачаалж чадсангүй.",
+                }
+            )
+        data["available"] = True
+        return Response(data)
 
     @action(detail=True, methods=["post", "delete"])
     def photos(self, request, pk=None):

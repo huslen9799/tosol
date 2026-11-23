@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
 import '../models/property.dart';
+import '../models/nearby_place.dart';
 import 'http_client.dart' if (dart.library.js_interop) 'http_client_web.dart';
 
 class ApiException implements Exception {
@@ -149,6 +150,9 @@ class ApiClient {
 
   Future<Property> property(int id) async => Property.fromJson(
     await request('GET', 'properties/$id/') as Map<String, dynamic>,
+  );
+  Future<NearbyResult> nearby(int id) async => NearbyResult.fromJson(
+    await request('GET', 'properties/$id/nearby/') as Map<String, dynamic>,
   );
   Future<Property> saveProperty(Map<String, dynamic> body, {int? id}) async =>
       Property.fromJson(
