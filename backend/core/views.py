@@ -26,6 +26,20 @@ from django.db.models import Q
 REGISTRATION_SALT = "core.registration-session"
 
 
+def email_delivery_error(error):
+    # Resend-ийн тест горим (onboarding@resend.dev) нь зөвхөн дансны
+    # эзэмшигчийн и-мэйл рүү хүргэдэг. Өөр хаяг руу илгээхэд 403/422 буцаадаг.
+    lowered = str(error).lower()
+    if any(token in lowered for token in ("403", "422", "test recipient", "domain", "not verified")):
+        return (
+            "И-мэйл илгээх үед алдаа гарлаа. Resend-ийн тест горимд зөвхөн "
+            "дансны эзэмшигчийн и-мэйл рүү илгээгдэнэ. Өөр хаяг руу "
+            "илгээхийн тулд Resend-д domain баталгаажуулаад "
+            "DEFAULT_FROM_EMAIL-ээ тохируулаарай."
+        )
+    return "И-мэйл илгээх үед алдаа гарлаа. Түр хүлээгээд дахин оролдоно уу."
+
+
 def registration_token(session):
     session.save()
     return signing.dumps(
@@ -158,7 +172,7 @@ def register(request):
         return Response(
             {
                 "success": False,
-                "message": "И-мэйл илгээх үед алдаа гарлаа.",
+                "message": email_delivery_error(e),
                 "error": str(e)
             },
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -406,7 +420,7 @@ def resend_otp(request):
         return Response(
             {
                 "success": False,
-                "message": "И-мэйл илгээх үед алдаа гарлаа.",
+                "message": email_delivery_error(e),
                 "error": str(e)
             },
             status=status.HTTP_500_INTERNAL_SERVER_ERROR

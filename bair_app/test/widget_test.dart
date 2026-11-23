@@ -396,7 +396,7 @@ void main() {
         find.byType(MaterialApp),
         matchesGoldenFile('../docs/screenshots/home-desktop.png'),
       );
-      await tester.tap(find.text('Байр хайх'));
+      await tester.tap(find.widgetWithText(TextButton, 'Байр хайх'));
       await tester.pumpAndSettle();
       expect(find.text('Дараагийн гэрээ эндээс.'), findsOneWidget);
       expect(find.text('Үр дүн харах'), findsOneWidget);
