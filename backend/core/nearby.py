@@ -20,9 +20,11 @@ OVERPASS_URLS = [
     "https://overpass.private.coffee/api/interpreter",
     "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
 ]
-CACHE_TTL = 60 * 60  # 1 цаг
+CACHE_TTL = 60 * 60 * 24  # 24 цаг ( давтамжтай харагдах газрууд шуурхай)
 DEFAULT_RADIUS = 1500  # метр
 PER_CATEGORY = 3
+OVERPASS_TIMEOUT = 15  # Overpass query-ийн timeout (секунд)
+REQUESTS_TIMEOUT = 15  # mirror тус бүрийн HTTP timeout (секунд)
 
 
 class NearbyUnavailable(Exception):
@@ -95,7 +97,7 @@ def _build_query(latitude, longitude, radius):
     parts = []
     for _label, node_filter in CATEGORIES.values():
         parts.append(f"{node_filter}(around:{radius},{latitude},{longitude});")
-    return "[out:json][timeout:25];(" + "".join(parts) + ");out;"
+    return "[out:json][timeout:%d];(" % OVERPASS_TIMEOUT + "".join(parts) + ");out qt;"
 
 
 def _fetch(latitude, longitude, radius):
@@ -106,7 +108,7 @@ def _fetch(latitude, longitude, radius):
             response = requests.get(
                 url,
                 params={"data": query},
-                timeout=30,
+                timeout=REQUESTS_TIMEOUT,
                 headers={"User-Agent": "UgeuBairApp/1.0 (nearby lookup)"},
             )
             response.raise_for_status()

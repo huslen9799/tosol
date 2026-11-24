@@ -154,7 +154,7 @@ class ApiClient {
     await request(
       'GET',
       'properties/$id/nearby/',
-      timeout: const Duration(seconds: 90),
+      timeout: const Duration(seconds: 45),
     ) as Map<String, dynamic>,
   );
 
