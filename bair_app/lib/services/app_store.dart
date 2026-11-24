@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'api_client.dart';
 import '../models/property.dart';
+import '../models/nearby_place.dart';
 
 class AppStore extends ChangeNotifier {
   final ApiClient api;
@@ -13,6 +14,13 @@ class AppStore extends ChangeNotifier {
   final Map<int, bool> favorites = {};
   final Set<int> _saving = {};
   final Set<int> comparison = {};
+  final Map<int, NearbyResult> _nearby = {};
+  final Map<int, Property> _properties = {};
+
+  NearbyResult? cachedNearby(int id) => _nearby[id];
+  void cacheNearby(int id, NearbyResult result) => _nearby[id] = result;
+  Property? cachedProperty(int id) => _properties[id];
+  void cacheProperty(Property property) => _properties[property.id] = property;
 
   void toggleComparison(int id) {
     if (!comparison.remove(id)) {

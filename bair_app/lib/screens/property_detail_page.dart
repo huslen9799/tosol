@@ -44,14 +44,37 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
     }
   }
 
-  Future<void> load() async {
+  Future<void> load({bool force = false}) async {
     final store = AppScope.read(context);
+    if (!force) {
+      final cached = store.cachedProperty(widget.id);
+      if (cached != null) {
+        final cachedNearby = store.cachedNearby(widget.id);
+        if (mounted) {
+          setState(() {
+            property = cached;
+            photoIndex = 0;
+            loading = false;
+            error = null;
+            nearby = cachedNearby;
+            nearbyLoading = false;
+          });
+        }
+        if (cachedNearby == null &&
+            cached.latitude != null &&
+            cached.longitude != null) {
+          loadNearby(); // cache байхгүй бол зөвхөн nearby-г татна
+        }
+        return;
+      }
+    }
     setState(() {
       loading = true;
       error = null;
     });
     try {
       final p = await store.api.property(widget.id);
+      store.cacheProperty(p);
       store.rememberFavorites([p]);
       if (mounted) {
         setState(() {
@@ -60,7 +83,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
         });
       }
       if (p.latitude != null && p.longitude != null) {
-        loadNearby(); // background — байрны мэдээллийг даруй харуулах
+        loadNearby(force: force); // background — байрны мэдээллийг даруй харуулах
       } else if (mounted) {
         setState(() => nearby = null);
       }
@@ -71,14 +94,28 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
     }
   }
 
-  Future<void> loadNearby() async {
+  Future<void> loadNearby({bool force = false}) async {
     final store = AppScope.read(context);
+    if (!force) {
+      final cached = store.cachedNearby(widget.id);
+      if (cached != null) {
+        if (mounted) {
+          setState(() {
+            nearby = cached;
+            nearbyLoading = false;
+            nearbyError = null;
+          });
+        }
+        return;
+      }
+    }
     setState(() {
       nearbyLoading = true;
       nearbyError = null;
     });
     try {
       final result = await store.api.nearby(widget.id);
+      store.cacheNearby(widget.id, result);
       if (mounted) setState(() => nearby = result);
     } catch (e) {
       if (mounted) setState(() => nearbyError = '$e');
@@ -153,7 +190,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
           : p == null
           ? SizedBox.shrink()
           : RefreshIndicator(
-              onRefresh: load,
+              onRefresh: () => load(force: true),
               child: Center(
                 child: ConstrainedBox(
                   constraints: BoxConstraints(maxWidth: 1040),

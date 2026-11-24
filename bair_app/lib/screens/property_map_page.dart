@@ -48,13 +48,32 @@ class _PropertyMapPageState extends State<PropertyMapPage> {
 
   Future<void> loadNearby(Property property) async {
     if (property.latitude == null || property.longitude == null) return;
+    final store = AppScope.read(context);
+    final cached = store.cachedNearby(property.id);
+    if (cached != null) {
+      if (mounted && nearbyFor == property.id) {
+        setState(() {
+          nearby = cached;
+          nearbyLoading = false;
+          nearbyError = null;
+        });
+      } else {
+        setState(() {
+          nearbyFor = property.id;
+          nearbyLoading = false;
+          nearbyError = null;
+        });
+      }
+      return;
+    }
     setState(() {
       nearbyLoading = true;
       nearbyError = null;
       nearbyFor = property.id;
     });
     try {
-      final result = await AppScope.read(context).api.nearby(property.id);
+      final result = await store.api.nearby(property.id);
+      store.cacheNearby(property.id, result);
       if (!mounted || nearbyFor != property.id) return;
       setState(() => nearby = result);
     } catch (e) {
